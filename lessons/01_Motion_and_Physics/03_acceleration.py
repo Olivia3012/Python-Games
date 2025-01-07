@@ -6,12 +6,12 @@ pygame.init()
 # Constants
 SCREEN_WIDTH, SCREEN_HEIGHT = 600, 600
 SQUARE_SIZE = 50
-SQUARE_COLOR = (255, 0, 0)  # Red
+SQUARE_COLOR = (255, 255, 255)  # Red
 K = .0004
 
 # Set up the display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Accelerating Red Square")
+pygame.display.set_caption("Accelerating White Square")
 
 # Square starting position
 x_pos = 20
@@ -32,7 +32,7 @@ while running:
          
     # Calculate the spring force, which is the force that pulls the square back
     # to the center, as if it was attached to a spring
-    a = -K * (x_pos - (SCREEN_WIDTH-SQUARE_SIZE) // 2)
+    a = -K * (x_pos - (SCREEN_WIDTH-SQUARE_SIZE) // 2) # How does this work?
 
     # Update the velocity with the acceleration. Notice that we change
     # the velocity by adding the acceleration, not setting it to the acceleration, 
