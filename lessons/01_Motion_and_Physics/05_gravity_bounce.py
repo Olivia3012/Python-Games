@@ -34,13 +34,13 @@ screen = pygame.display.set_mode((settings.screen_width, settings.screen_height)
 # Define player
 player = pygame.Rect(100, settings.screen_height - settings.player_size, settings.player_size, settings.player_size)
 
-player_y_velocity = 0
-player_x_velocity = 0
-x_direction = 1 # Elther 1 or negative 1, so we can keep track for direction after hitting the ground
+player_y_velocity = 1
+player_x_velocity = 1
+x_direction = 1 # Either 1 or negative 1, so we can keep track for direction after hitting the ground
 
 is_jumping = False
 
-# Main game loop
+# Main game loop 
 running = True
 clock = pygame.time.Clock()
 
@@ -52,13 +52,24 @@ while running:
             running = False
 
     # Continuously jump. If the player is not jumping, make it jump
-    if is_jumping is False:
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_SPACE]:
         # Jumping means that the player is going up. The top of the 
         # screen is y=0, and the bottom is y=settings.screen_height. So, to go up,
         # we need to have a negative y velocity
-        
+    
         player_y_velocity = -settings.jump_y_velocity
-        player_x_velocity = settings.jump_x_velocity * x_direction
+        if keys[pygame.K_a]:
+            player_x_velocity = settings.jump_x_velocity * -1
+            player_y_velocity -= 0.05
+            if player_y_velocity == 0.1:
+                player_y_velocity == 0
+        if keys[pygame.K_d]:
+            player_x_velocity = settings.jump_x_velocity * 1
+            player_y_velocity -= 0.1
+            if player_y_velocity == 0.05:
+                player_y_velocity == 0
+            
         
         is_jumping = True
         
@@ -68,8 +79,8 @@ while running:
         # to make the player go up more slowly. Eventually, the player will have
         # a positive y velocity, and gravity will pull the player down.
 
-        player_y_velocity += settings.gravity
-        player.y += player_y_velocity
+        player_y_velocity += settings.gravity 
+        player.y += player_y_velocity 
         player.x += player_x_velocity
         
     # If the player hits one side of the screen or the other, bounce the player

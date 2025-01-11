@@ -6,12 +6,12 @@ pygame.init()
 # Constants
 SCREEN_WIDTH, SCREEN_HEIGHT = 600, 600
 SQUARE_SIZE = 50
-SQUARE_COLOR = (255, 255, 255)  # Red
+SQUARE_COLOR = (25, 200, 25)  # Red
 K = .0004
 
 # Set up the display
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Accelerating White Square")
+pygame.display.set_caption("Accelerating Green Square")
 
 # Square starting position
 x_pos = 20
