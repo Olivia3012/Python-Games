@@ -10,15 +10,15 @@ import pygame
 from dataclasses import dataclass
 
 @dataclass
-class Settings:
-    """Class for keeping track of game settings and constants."""
+class Settings: 
+    """Class for keeping track a of game settings and constants."""
     screen_width: int = 500
     screen_height: int = 500
     white: tuple = (255, 255, 255)
     black: tuple = (0, 0, 0)
     red: tuple = (255, 0, 0)
     player_size: int = 20
-    gravity: int = 1
+    gravity: int =  1
     jump_y_velocity: int = 30
     jump_x_velocity: int = 10
 
