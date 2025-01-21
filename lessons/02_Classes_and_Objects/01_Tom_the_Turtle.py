@@ -45,8 +45,29 @@ class Turtle:
     def left(self, angle):
         # Turn left by adjusting the angle counterclockwise
         self.angle = (self.angle + angle) % 360
+    def right(self, angle):
+        self.ange = (self.angle - angle) % 360
 
+    def colors(self, turtle):
+        turtle.color = 'blue'
+        pygame.draw.line(self.screen, turtle.color, (start_x, start_y), (self.x, self.y), 2)
+        start_x = self.x  # Save the starting position
+        start_y = self.y
+    def pen_up(self):
+        pygame.draw.line(self.screen, white, (start_x, start_y), (self.x, self.y), 2) 
+        radian_angle = math.radians(self.angle)
+        start_x = self.x  # Save the starting position
+        start_y = self.y
 
+    def pen_down(self):
+        pygame.draw.line(self.screen, black, (start_x, start_y), (self.x, self.y), 2) 
+        start_x = self.x  # Save the starting position
+        start_y = self.y
+        # Calculate the new position displacement
+
+class special_turtle(Turtle):
+    print("My name is Tom, and I can talk!")
+    
 # Main loop
 
 # Initialize Pygame
@@ -66,14 +87,20 @@ turtle = Turtle(screen, screen.get_width() // 2, screen.get_height() // 2)  # St
 
 # Draw a square using turtle-style commands
 for _ in range(4):
+    turtle.color = 'red'
     turtle.forward(100)  # Move forward by 100 pixels
     turtle.left(90)  # Turn left by 90 degrees
 
+for _ in range(10):
+    turtle.color = 'red'
+    turtle.forward(5)
+    turtle.right(90)
 # Display the drawing
 pygame.display.flip()
 
 # Wait to quit
 event_loop()
+
 
 # Quit Pygame
 pygame.quit()
