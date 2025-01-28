@@ -87,14 +87,14 @@ turtle = Turtle(screen, screen.get_width() // 2, screen.get_height() // 2)  # St
 
 # Draw a square using turtle-style commands
 for _ in range(4):
-    turtle.color = 'red'
+    turtle.colors = 'red'
     turtle.forward(100)  # Move forward by 100 pixels
     turtle.left(90)  # Turn left by 90 degrees
 
-for _ in range(10):
-    turtle.color = 'red'
-    turtle.forward(5)
-    turtle.right(90)
+
+turtle.colors = 'red'
+turtle.forward(50)
+turtle.right(90)
 # Display the drawing
 pygame.display.flip()
 
