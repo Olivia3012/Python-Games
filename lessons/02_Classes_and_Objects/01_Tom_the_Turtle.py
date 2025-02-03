@@ -18,12 +18,19 @@ def event_loop():
                 return
 
 class Turtle:
+    white = (255, 255, 255)
+    black = (0, 0, 0)
     def __init__(self, screen, x: int, y: int):
         self.x = x
         self.y = y
         self.screen = screen
         self.angle = 0  # Angle in degrees, starting facing right
-
+        self._color = Turtle.black
+        
+        self.black = (0, 0, 0)
+        self.random = (100, 56, 207)
+        
+        color = ()
     def forward(self, distance):
         # Calculate new position based on current angle
         radian_angle = math.radians(self.angle)
@@ -40,29 +47,30 @@ class Turtle:
         self.y -= dy
 
         # Draw line to the new position
-        pygame.draw.line(self.screen, black, (start_x, start_y), (self.x, self.y), 2)
+        pygame.draw.line(self.screen, self._color, (start_x, start_y), (self.x, self.y), 2)
+
+    """def colors(turtle, color):
+        colors.white = (255, 255, 255)
+        colors.black =  (0, 0, 0)
+        colors.blue = (100, 50, 100)
+        colors.red = (5, 80, 150)
+    """   
 
     def left(self, angle):
         # Turn left by adjusting the angle counterclockwise
         self.angle = (self.angle + angle) % 360
+    
     def right(self, angle):
-        self.ange = (self.angle - angle) % 360
+        self.angle = (self.angle - angle) % 360
 
-    def colors(self, turtle):
-        turtle.color = 'blue'
-        pygame.draw.line(self.screen, turtle.color, (start_x, start_y), (self.x, self.y), 2)
-        start_x = self.x  # Save the starting position
-        start_y = self.y
+    def color(self, color):
+        self._color = color
+        
     def pen_up(self):
-        pygame.draw.line(self.screen, white, (start_x, start_y), (self.x, self.y), 2) 
-        radian_angle = math.radians(self.angle)
-        start_x = self.x  # Save the starting position
-        start_y = self.y
+        self._color = self.white
 
     def pen_down(self):
-        pygame.draw.line(self.screen, black, (start_x, start_y), (self.x, self.y), 2) 
-        start_x = self.x  # Save the starting position
-        start_y = self.y
+        self._color = self.random
         # Calculate the new position displacement
 
 class special_turtle(Turtle):
@@ -79,22 +87,29 @@ screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Turtle Style Drawing")
 
 # Colors
-white = (255, 255, 255)
-black = (0, 0, 0)
 
-screen.fill(white)
-turtle = Turtle(screen, screen.get_width() // 2, screen.get_height() // 2)  # Start at the center of the screen
-
+#screen.fill(colors.white)
+screen.fill(Turtle.white)
+turtle = Turtle(screen, screen.get_width() // 2, screen.get_height() // 2)  # Start at the center of the scree
 # Draw a square using turtle-style commands
 for _ in range(4):
-    turtle.colors = 'red'
     turtle.forward(100)  # Move forward by 100 pixels
     turtle.left(90)  # Turn left by 90 degrees
 
+def coordinates(turtle):
+    print("Tom is now at", turtle.x, turtle.y)
 
-turtle.colors = 'red'
+coordinates(turtle)
+#turtle.color(turtle.random)
+turtle.color(turtle.random)
+turtle.pen_down()
 turtle.forward(50)
 turtle.right(90)
+
+coordinates(turtle)
+
+turtle.forward(1000)
+coordinates(turtle)
 # Display the drawing
 pygame.display.flip()
 

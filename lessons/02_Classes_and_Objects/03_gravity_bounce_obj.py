@@ -15,6 +15,7 @@ class Colors:
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
     RED = (255, 0, 0)
+    RANDOM = (174, 78, 237)
 
 
 class GameSettings:
@@ -22,7 +23,7 @@ class GameSettings:
     width: int = 500
     height: int = 500
     gravity: float = 0.3
-    player_start_x: int = 100
+    player_start_x: int = 10
     player_start_y: int = None
     player_v_y: float = 0  # Initial y velocity
     player_v_x: float = 7  # Initial x velocity
@@ -125,14 +126,18 @@ class Player:
             self.is_jumping = True
 
     def draw(self, screen):
-        pygame.draw.rect(screen, Colors.BLACK, (self.x, self.y, self.width, self.height))
+        pygame.draw.rect(screen, Colors.RANDOM, (self.x, self.y, self.width, self.height))
 
 
 settings = GameSettings()
 game = Game(settings)
 
 p1 = Player(game)
+p2 = Player(game)
 game.add_player(p1)
+p2.x = 4
+p2.y = 9
+game.add_player(p2)
 
 
 game.run()
