@@ -7,7 +7,7 @@ side of the screen.
 
 """
 import pygame
-from dataclasses import dataclass
+from dataclasses import dataclass  
 
 @dataclass
 class Settings: 

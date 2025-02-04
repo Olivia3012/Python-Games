@@ -90,6 +90,7 @@ class Player:
         
         self.v_x = settings.player_v_x  # X Velocity
         self.v_y = settings.player_v_y  # Y Velocity
+        self.color = Colors.RED
 
     def update(self):
         """Update player position, continuously jumping"""
@@ -126,7 +127,7 @@ class Player:
             self.is_jumping = True
 
     def draw(self, screen):
-        pygame.draw.rect(screen, Colors.RANDOM, (self.x, self.y, self.width, self.height))
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height))
 
 
 settings = GameSettings()
@@ -134,9 +135,11 @@ game = Game(settings)
 
 p1 = Player(game)
 p2 = Player(game)
+p1.color = Colors.RANDOM
 game.add_player(p1)
 p2.x = 4
 p2.y = 9
+p2.color = Colors.BLACK
 game.add_player(p2)
 
 

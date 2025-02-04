@@ -30,10 +30,11 @@ class GameSettings:
     player_start_y: int = None
     player_v_y: float = 0  # Initial y velocity
     player_v_x: float = 4  # Initial x velocity
-    player_width: int = 20
-    player_height: int = 20
+    player_width: int = 100
+    player_height: int = 100
     player_jump_velocity: float = 15
-    frame_rate: int = 15
+    frame_rate: int = 100
+    
 
 
 class Game:
@@ -151,7 +152,11 @@ class Player:
             self.vel.y = 0
 
         if self.at_top() and self.going_up():
-            self.vel.y = -self.vel.y # Bounce off the top. 
+            self.vel.y = -self.vel.y
+            
+        drag = -self.vel * 0.0001
+        self.vel= self.vel + drag
+         # Bounce off the top. 
 
         # If the player hits one side of the screen or the other, bounce the
         # player. we are also checking if the player has a velocity going farther
