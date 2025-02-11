@@ -31,6 +31,14 @@ class GameSettings:
     player_height: int = 20
     player_jump_velocity: float = 15
     frame_rate: int = 100
+    BACKROUND_COLOR = (0,0,0)
+    LINE_COLOR = (50, 82, 250)
+    SCREEN_WIDTH = 600
+    SCREEN_HEIGHT = 600
+    INITIAL_LENGTH = 10
+
+screen = pygame.display.set_mode((GameSettings.SCREEN_WIDTH, GameSettings.SCREEN_HEIGHT))
+pygame.display.set_caption("Player with Direction Vector")
     
 
 
@@ -39,7 +47,7 @@ class Game:
     update, drawing and collision methods that operate on multiple other
     objects, like the player and obstacles."""
     
-    def __init__(self, settings: GameSettings):
+    def __init__(self, settings: GameSettings, x, y):
         pygame.init()
 
         self.settings = settings
@@ -50,6 +58,11 @@ class Game:
 
         # Turn Gravity into a vector
         self.gravity = pygame.Vector2(0, self.settings.gravity)
+
+        self.position = pygame.math.Vector2(x, y)
+        self.direction_vector = pygame.math.Vector2(GameSettings.INITIAL_LENGTH, 0)  # Initial direction vector
+
+        end_position = self.position + self.direction_vector
 
     def run(self):
         """Main game loop"""
@@ -194,12 +207,6 @@ class Player:
         # Notice that we've gotten rid of self.is_jumping, because we can just
         # check if the player is at the bottom. 
         
-        """if self.at_bottom():
-                self.vel += self.v_jump
-                """
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
-            self.vel += self.v_jump
         # Jumping means that the player is going up. The top of the 
         # screen is y=0, and the bottom is y=SCREEN_HEIGHT. So, to go up,
         # we need to have a negative y velocity
@@ -210,10 +217,35 @@ class Player:
         if keys[pygame.K_SPACE]:
             self.vel += self.v_jump
     
-    def draw(self, screen):
+    def draw(self, screen, show_line = True):
         pygame.draw.rect(screen, Colors.PLAYER_COLOR, (self.pos.x, self.pos.y, self.width, self.height))
         
+        if show_line:
+            end_position = self.position + self.direction_vector
+            pygame.draw.line(screen, GameSettings.LINE_COLOR, self.position, end_position, 2)
+
+    def move(self):
+        """Moves the player in the direction of the current angle."""
+        
+        
+        init_position = self.position # Save the initial position for the animation
+        
+        # Calculate the final position after moving. Its just addition!
+        final_position = self.position + self.direction_vector
+        
+        # The rest is just for animation
+        length = self.direction_vector.length()
+        N = int(length // 3)
+        step = (final_position - self.position) / N
+       
+        for i in range(N):
+            self.position += step
+            screen.fill(GameSettings.BACKGROUND_COLOR)
+            self.draw(show_line=False)
+            pygame.draw.line(screen, GameSettings.LINE_COLOR, init_position, final_position, 2)
+            pygame.display.flip()
+            
 
 settings = GameSettings()
-game = Game(settings)
+game = Game(settings, x=100, y=100)
 game.run()
