@@ -1,12 +1,3 @@
-"""
-Gravity bounce using Vectors. 
-
-This version of the Gravity Bounce program uses Pygame's Vector2 class to handle
-the player's position and velocity. This makes the code more readable and
-understandable, and makes it easier to add more complex features to the game.
-
-
-"""
 import pygame
 from dataclasses import dataclass
 
@@ -19,6 +10,11 @@ class Colors:
     RED = (255, 0, 0)
     PLAYER_COLOR = (0, 0, 255)
     BACKGROUND_COLOR = (255, 255, 255)
+    LINE_COLOR = (0, 255, 100)
+    ANGLE_CHANGE = 3
+    LENGTH_CHANGE = 5
+    INITIAL_LENGTH = 100
+    FBS = 30
 
 
 @dataclass
@@ -94,6 +90,7 @@ class Player:
         # Player's velocity
         self.vel = pygame.Vector2(settings.player_v_x, settings.player_v_y)  # Velocity vector
 
+    
 
 
     # Direction functions. IMPORTANT! Using these functions isn't really
@@ -143,7 +140,6 @@ class Player:
         self.update_jump()
         self.update_v()
         self.update_pos()
-        self.update_input()
         
     def update_v(self):
         """Update the player's velocity based on gravity and bounce on edges"""
@@ -216,7 +212,7 @@ class Player:
     
     def draw(self, screen):
         pygame.draw.rect(screen, Colors.PLAYER_COLOR, (self.pos.x, self.pos.y, self.width, self.height))
-
+        
 
 settings = GameSettings()
 game = Game(settings)
