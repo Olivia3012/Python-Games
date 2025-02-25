@@ -8,13 +8,14 @@ from jtlgames.vector20 import Vector20Factory
 class Colors:
     """Constants for Colors"""
     WHITE = (255, 255, 255)
-    BLACK = (0, 0, 0)
+    BLACK = (0, 0, 0) 
     RED = (255, 0, 0)
     PLAYER_COLOR = (0, 0, 255)
     BACKGROUND_COLOR = (255, 255, 255)
+    LINE_COLOR = (50, 95, 255)
 
 
-@dataclass
+@dataclass         
 class GameSettings:
     """Settings for the game"""
     width: int = 500
@@ -26,7 +27,7 @@ class GameSettings:
     player_v_x: float = 4  # Initial x velocity
     player_width: int = 20
     player_height: int = 20
-    player_jump_velocity: float = 15
+    player_jump_velocity: float = 1
     frame_rate: int = 100
     thrust = pygame.Vector2(2,1)
     
@@ -77,9 +78,10 @@ class Player:
 
         self.width = settings.player_width
         self.height = settings.player_height
-    
+
+        
         # Vector for our jump velocity, which is just up
-        self.v_jump = pygame.Vector2(0, -settings.player_jump_velocity)
+        self.v_jump = pygame.Vector2(-settings.player_jump_velocity, -settings.player_jump_velocity)
 
         # Player position
         self.pos = pygame.Vector2(settings.player_start_x, 
@@ -88,6 +90,8 @@ class Player:
         # Player's velocity
         self.vel = pygame.Vector2(settings.player_v_x, settings.player_v_y)  # Velocity vector
         self.vel = settings.thrust
+
+        self.LENGTH = 0.1
 
 
     # Direction functions. IMPORTANT! Using these functions isn't really
@@ -150,11 +154,9 @@ class Player:
         if self.at_top() and self.going_up():
             self.vel.y = -self.vel.y
             
-        drag = -self.vel * 0.001
+        drag = -self.vel * 0.01
         self.vel= self.vel + drag
 
-        thrust = self.vel * 0.0005
-        self.vel = self.vel + thrust
          # Bounce off the top. 
 
         # If the player hits one side of the screen or the other, bounce the
@@ -198,7 +200,8 @@ class Player:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             self.vel += self.v_jump
-        # Jumping means that the player is going up. The top of the 
+
+        # Jumping means that the player is going up. The top of the  
         # screen is y=0, and the bottom is y=SCREEN_HEIGHT. So, to go up,
         # we need to have a negative y velocity
         
@@ -206,11 +209,48 @@ class Player:
     def update_input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
-            self.vel += self.v_jump
+            self.vel += self.v_jump * self.LENGTH
+ 
     
     def draw(self, screen):
         pygame.draw.rect(screen, Colors.PLAYER_COLOR, (self.pos.x, self.pos.y, self.width, self.height))
 
+        
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            self.LENGTH+=0.05
+            
+
+        if keys[pygame.K_d]:
+            self.LENGTH-=0.05
+        
+        
+        initial_position = self.pos
+        end_position = self.pos + self.v_jump * self.LENGTH * 100
+        pygame.draw.line(screen ,Colors.LINE_COLOR, initial_position, end_position, 2)
+
+
+        
+    """def move(self):
+        Moves the player in the direction of the current angle
+        
+        
+        init_position = self.position # Save the initial position for the animation
+        
+        # Calculate the final position after moving. Its just addition!
+        final_position = self.position + self.direction_vector
+        
+        # The rest is just for animation
+        length = self.direction_vector.length()
+        N = int(length // 3)
+        step = (final_position - self.position) / N
+       
+        for i in range(N):
+            self.position += step
+            self.screen.fill(GameSettings.BACKGROUND_COLOR)
+            self.draw(show_line=False)
+            pygame.draw.line(self.screen, GameSettings.LINE_COLOR, init_position, final_position, 2)"""
+    
 
 settings = GameSettings()
 game = Game(settings)

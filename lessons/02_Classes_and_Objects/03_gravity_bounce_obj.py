@@ -135,12 +135,17 @@ game = Game(settings)
 
 p1 = Player(game)
 p2 = Player(game)
+p3 = Player(game)
 p1.color = Colors.RANDOM
 game.add_player(p1)
 p2.x = 4
 p2.y = 9
+p3.x = 2
+p3.y = 10
 p2.color = Colors.BLACK
+p3.color = Colors.RED
 game.add_player(p2)
+game.add_player(p3)
 
 
 game.run()
