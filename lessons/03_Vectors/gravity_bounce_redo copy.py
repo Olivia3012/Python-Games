@@ -50,6 +50,9 @@ class Game:
         # Turn Gravity into a vector
         self.gravity = pygame.Vector2(0, self.settings.gravity)
 
+    def vec_to_center(self, pos):
+        print("I am at", Player.posx, Player)
+
     def run(self):
         """Main game loop"""
         player = Player(self)
@@ -67,7 +70,6 @@ class Game:
             self.clock.tick(self.settings.frame_rate)
 
         pygame.quit() 
-
 
 class Player:
     """Player class, just a bouncing rectangle"""
@@ -238,27 +240,6 @@ class Player:
         pygame.draw.line(screen ,Colors.LINE_COLOR, initial_position, end_position, 2)
 
 
-        
-    """def move(self):
-        Moves the player in the direction of the current angle
-        
-        
-        init_position = self.position # Save the initial position for the animation
-        
-        # Calculate the final position after moving. Its just addition!
-        final_position = self.position + self.direction_vector
-        
-        # The rest is just for animation
-        length = self.direction_vector.length()
-        N = int(length // 3)
-        step = (final_position - self.position) / N
-       
-        for i in range(N):
-            self.position += step
-            self.screen.fill(GameSettings.BACKGROUND_COLOR)
-            self.draw(show_line=False)
-            pygame.draw.line(self.screen, GameSettings.LINE_COLOR, init_position, final_position, 2)"""
-    
 
 settings = GameSettings()
 game = Game(settings)
