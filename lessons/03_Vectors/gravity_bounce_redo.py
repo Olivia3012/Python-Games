@@ -13,7 +13,10 @@ class Colors:
     PLAYER_COLOR = (0, 0, 255)
     BACKGROUND_COLOR = (255, 255, 255)
     LINE_COLOR = (163, 212, 231)
-
+    LINE_COLOR2 = (234, 129, 89)
+    LINE_COLOR3 = (222, 196, 246)
+    LINE_COLOR4 = (1, 100, 255)
+    JAYDEN_COLOR = (127,156,223)
 
 @dataclass         
 class GameSettings:
@@ -48,7 +51,6 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # Turn Gravity into a vector
-        self.gravity = pygame.Vector2(0, self.settings.gravity)
 
     def run(self):
         """Main game loop"""
@@ -66,7 +68,14 @@ class Game:
             pygame.display.flip()
             self.clock.tick(self.settings.frame_rate)
 
-        pygame.quit() 
+        
+        pygame.quit()
+
+    def vec_to_center(self, pos):
+        initial_position = pos
+        end_position = (GameSettings.width/2, GameSettings.height/2)
+        pygame.draw.line(self.screen ,Colors.LINE_COLOR4, initial_position, end_position)
+        return end_position - initial_position
 
 
 class Player:
@@ -78,6 +87,8 @@ class Player:
 
         self.width = settings.player_width
         self.height = settings.player_height
+
+
 
         
         # Vector for our jump velocity, which is just up
@@ -157,8 +168,8 @@ class Player:
         if self.at_top() and self.going_up():
             self.vel.y = -self.vel.y
             
-        drag = -self.vel * 0.01
-        self.vel= self.vel + drag
+        """drag = -self.vel * 0.01
+        self.vel= self.vel + drag"""
 
          # Bounce off the top. 
 
@@ -216,16 +227,16 @@ class Player:
  
     
     def draw(self, screen):
+        pygame.draw.circle(screen, Colors.JAYDEN_COLOR, (GameSettings.width/2, GameSettings.height/2), 100)
         pygame.draw.rect(screen, Colors.PLAYER_COLOR, (self.pos.x, self.pos.y, self.width, self.height))
 
-        
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
-            self.LENGTH+=0.05
+            self.LENGTH+=0.01
             
 
         if keys[pygame.K_DOWN]:
-            self.LENGTH-=0.03
+            self.LENGTH-=0.01
 
         if keys[pygame.K_RIGHT]:
             self.v_jump = self.v_jump.rotate(1)
@@ -236,28 +247,34 @@ class Player:
         initial_position = self.pos
         end_position = self.pos + self.v_jump * self.LENGTH * 100
         pygame.draw.line(screen ,Colors.LINE_COLOR, initial_position, end_position, 2)
+        
+        self.game.vec_to_center(self.pos)
+        self.gravity = self.game.vec_to_center(self.pos) * 0.001
+        v = self.gravity 
+
+        # Calculate the magnitude (r) of the vector
+        r = v.length()
+
+        # Avoid division by zero by checking if r is non-zero
+        v_scaled = pygame.math.Vector2(0, 0)
+
+        if r < 1 and self.vel.length()<0.1:
+            self.vel = pygame.math.Vector2(0, 0)
+        elif r != 0:
+            # Scale the vector by 1 / r^2
+            v_scaled = v * (1 / r**2)
+              # Handle zero-length vector if necessary
+        v_scaled*=0.01
+        # Output the scaled vector
+        print(v_scaled)
+
+        self.gravity = v_scaled
 
 
-        
-    """def move(self):
-        Moves the player in the direction of the current angle
-        
-        
-        init_position = self.position # Save the initial position for the animation
-        
-        # Calculate the final position after moving. Its just addition!
-        final_position = self.position + self.direction_vector
-        
-        # The rest is just for animation
-        length = self.direction_vector.length()
-        N = int(length // 3)
-        step = (final_position - self.position) / N
-       
-        for i in range(N):
-            self.position += step
-            self.screen.fill(GameSettings.BACKGROUND_COLOR)
-            self.draw(show_line=False)
-            pygame.draw.line(self.screen, GameSettings.LINE_COLOR, init_position, final_position, 2)"""
+    def caculate_gravity(self):
+        pass
+
+
     
 
 settings = GameSettings()
