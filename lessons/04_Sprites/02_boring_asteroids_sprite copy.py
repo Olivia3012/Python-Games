@@ -88,6 +88,16 @@ class Spaceship(pygame.sprite.Sprite):
     # are going to handle input and update the image of the spaceship. However,
     # we also need to call the update method of the parent class, so we use
     # super().update()
+    def teleport(self, AlienSpaceship, Settings):
+        
+        if self.rect.right < 0:
+            self.rect.left = (self.rect.center [1], 795)
+
+        if self.rect.left < 0:
+            self.rect.left = Settings.width 
+    
+    
+    
     def update(self):
         
         keys = pygame.key.get_pressed()
@@ -109,7 +119,7 @@ class Spaceship(pygame.sprite.Sprite):
         if keys[pygame.K_UP]:
             self.rect.center += self.velocity.rotate(self.angle)
         
-        
+        self.teleport( AlienSpaceship, Settings)
         # Dont forget this part! If you don't call the Sprite update method, the
         # sprite will not be drawn
         super().update()
@@ -118,7 +128,6 @@ class Spaceship(pygame.sprite.Sprite):
     # Sprite class already has a draw method that will draw the image on the
     # screen. We only need to add the sprite to a group and the group will take
     # care of drawing the sprite.
-
 
 
 class AlienSpaceship(Spaceship):

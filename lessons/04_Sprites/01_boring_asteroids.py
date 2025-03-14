@@ -38,6 +38,8 @@ class Spaceship:
         rotated_points = [point.rotate(self.angle) + self.position for point in points]
         pygame.draw.polygon(surface, self.settings.colors['white'], rotated_points)
 
+
+
 # Projectile class to handle projectile movement and drawing
 class Projectile:
     def __init__(self, position, angle, settings):
@@ -57,7 +59,7 @@ class Game:
         pygame.init()
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.width, self.settings.height))
-        pygame.display.set_caption("Really Boring Asteroids")
+        pygame.display.set_caption("Really Boring Asteroids :(")
         self.clock = pygame.time.Clock()
         self.running = True
         self.spaceship = Spaceship(self.settings)
