@@ -107,7 +107,10 @@ class Spaceship(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=self.rect.center)
 
         if keys[pygame.K_UP]:
-            self.rect.center += self.velocity.rotate(self.angle)
+            self.rect.center += self.velocity.rotate(self.angle) * 2
+
+        if keys[pygame.K_DOWN]:
+            self.rect.center -= self.velocity.rotate(self.angle) * 2
         
         
         # Dont forget this part! If you don't call the Sprite update method, the
@@ -160,6 +163,7 @@ class Projectile(pygame.sprite.Sprite):
         # Notice that we are using the rect attribute to store the position of the projectile
         self.rect = self.image.get_rect(center=position)
 
+    
     def update(self):
         self.rect.center += self.velocity
 

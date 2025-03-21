@@ -10,14 +10,15 @@ assets = Path(__file__).parent / "images"
 class Settings:
     """Class to store game configuration."""
     velocity = 0.1
-    width = 800
+    width = 600
     height = 600
     fps = 60
     triangle_size = 20
     projectile_speed = 5
     projectile_size = 11
-    shoot_delay = 250  # 250 milliseconds between shots, or 4 shots per second
+    shoot_delay = 100  # 250 milliseconds between shots, or 4 shots per second
     colors = {"white": (255, 255, 255), "black": (0, 0, 0), "red": (255, 0, 0)}
+    random_color = (6,100,51)
 
 
 # Notice that this Spaceship class is a bit different: it is a subclass of
@@ -90,12 +91,17 @@ class Spaceship(pygame.sprite.Sprite):
     # super().update()
     def teleport(self, AlienSpaceship, Settings):
         
-        if self.rect.right < 0:
-            self.rect.left = (self.rect.center [1], 795)
+        if self.rect.right > Settings.width:
+            self.rect.left = 1
 
         if self.rect.left < 0:
-            self.rect.left = Settings.width 
-    
+            self.rect.right = Settings.width - 2
+
+        if self.rect.bottom > Settings.height:
+            self.rect.top = 2
+
+        if self.rect.top < 0:
+            self.rect.bottom = Settings.height - 2
     
     
     def update(self):
@@ -117,7 +123,10 @@ class Spaceship(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=self.rect.center)
 
         if keys[pygame.K_UP]:
-            self.rect.center += self.velocity.rotate(self.angle)
+            self.rect.center += self.velocity.rotate(self.angle) * 2
+
+        if keys[pygame.K_DOWN]:
+            self.rect.center -= self.velocity.rotate(self.angle) * 2
         
         self.teleport( AlienSpaceship, Settings)
         # Dont forget this part! If you don't call the Sprite update method, the
@@ -169,6 +178,19 @@ class Projectile(pygame.sprite.Sprite):
         # Notice that we are using the rect attribute to store the position of the projectile
         self.rect = self.image.get_rect(center=position)
 
+    
+        if self.rect.right > Settings.width:
+            self.kill()
+
+        if self.rect.left < 0:
+            self.kill()
+
+        if self.rect.bottom > Settings.height:
+            self.kill()
+
+        if self.rect.top < 0:
+            self.kill()
+    
     def update(self):
         self.rect.center += self.velocity
 
