@@ -16,7 +16,7 @@ class Settings:
     triangle_size = 20
     projectile_speed = 5
     projectile_size = 11
-    shoot_delay = 100  # 250 milliseconds between shots, or 4 shots per second
+    shoot_delay = 40  # 250 milliseconds between shots, or 4 shots per second
     colors = {"white": (255, 255, 255), "black": (0, 0, 0), "red": (255, 0, 0)}
     random_color = (6,100,51)
 

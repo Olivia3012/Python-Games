@@ -16,46 +16,53 @@ pygame.init()
 images_dir = Path(__file__).parent / "images" if (Path(__file__).parent / "images").exists() else Path(__file__).parent / "assets"
 
 # Screen dimensions.         
-WIDTH, HEIGHT = 600, 300
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Dino Jump")
+class Game_Settings():
+    WIDTH, HEIGHT = 600, 300
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Dino Jump")
 
-# Colors
-BLUE = (0, 0, 255)
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+    # Colors
+    BLUE = (0, 0, 255)
+    BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
 
-# FPS
-FPS = 60
+    # FPS
+    FPS = 60
 
-# Player attributes
-PLAYER_SIZE = 25
+    # Player attributes
+    PLAYER_SIZE = 25
 
-player_speed = 5
+    player_speed = 5
 
-# Obstacle attributes
-OBSTACLE_WIDTH = 20
-OBSTACLE_HEIGHT = 20
-obstacle_speed = 5
+    # Obstacle attributes
+    OBSTACLE_WIDTH = 20
+    OBSTACLE_HEIGHT = 20
+    obstacle_speed = 5
+
+    Player_x_velocity = 2
+    Player_y_velocity = 2
+    Player_gravity = 0.75
+    is_jumping = False
+
 
 # Font
-font = pygame.font.SysFont(None, 36)
+    font = pygame.font.SysFont(None, 36)
 
 
 # Define an obstacle class
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((OBSTACLE_WIDTH, OBSTACLE_HEIGHT))
-        self.image.fill(BLACK)
+        self.image = pygame.Surface((Game_Settings.OBSTACLE_WIDTH, Game_Settings.OBSTACLE_HEIGHT))
+        self.image.fill(Game_Settings.BLACK)
         self.rect = self.image.get_rect()
-        self.rect.x = WIDTH
-        self.rect.y = HEIGHT - OBSTACLE_HEIGHT - 10
+        self.rect.x = Game_Settings.WIDTH
+        self.rect.y = Game_Settings.HEIGHT - Game_Settings.OBSTACLE_HEIGHT - 10
 
         self.explosion = pygame.image.load(images_dir / "explosion1.gif")
 
     def update(self):
-        self.rect.x -= obstacle_speed
+        self.rect.x -= Game_Settings.obstacle_speed
         # Remove the obstacle if it goes off screen
         if self.rect.right < 0:
             self.kill()
@@ -65,7 +72,7 @@ class Obstacle(pygame.sprite.Sprite):
         
         # Load the explosion image
         self.image = self.explosion
-        self.image = pygame.transform.scale(self.image, (OBSTACLE_WIDTH, OBSTACLE_HEIGHT))
+        self.image = pygame.transform.scale(self.image, (Game_Settings.OBSTACLE_WIDTH, Game_Settings.OBSTACLE_HEIGHT))
         self.rect = self.image.get_rect(center=self.rect.center)
 
 
@@ -73,15 +80,34 @@ class Obstacle(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((PLAYER_SIZE, PLAYER_SIZE))
-        self.image.fill(BLUE)
+        self.image = pygame.Surface((Game_Settings.PLAYER_SIZE, Game_Settings.PLAYER_SIZE))
+        self.image.fill(Game_Settings.BLUE)
         self.rect = self.image.get_rect()
         self.rect.x = 50
-        self.rect.y = HEIGHT - PLAYER_SIZE - 10
-        self.speed = player_speed
-
+        self.rect.y = Game_Settings.HEIGHT - Game_Settings.PLAYER_SIZE - 10
+        self.speed = Game_Settings.player_speed
+    
     def update(self):
+        
+        self.velocity = 2
+        self.gravity = 0.5
+
+        self.speed += 0.5
+        self.rect.y += self.speed
+        
         keys = pygame.key.get_pressed()
+        
+
+        if self.rect.y == 0:
+            is_jumping = True
+
+        else:
+            is_jumping = False
+
+        if is_jumping == True:
+            if keys[pygame.K_SPACE]:
+                self.speed= -10
+                
         if keys[pygame.K_UP]:
             self.rect.y -= self.speed
         if keys[pygame.K_DOWN]:
@@ -90,8 +116,18 @@ class Player(pygame.sprite.Sprite):
         # Keep the player on screen
         if self.rect.top < 0:
             self.rect.top = 0
-        if self.rect.bottom > HEIGHT:
-            self.rect.bottom = HEIGHT
+        if self.rect.bottom > Game_Settings.HEIGHT:
+            self.rect.bottom = Game_Settings.HEIGHT
+
+        """if keys[pygame.K_SPACE]:"""
+        # Jumping means that the player is going up. The top of the 
+        # screen is y=0, and the bottom is y=settings.screen_height. So, to go up,
+        # we need to have a negative y velocity
+    
+        
+            
+
+        
 
 # Create a player object
 player = Player()
@@ -114,7 +150,7 @@ def add_obstacle(obstacles):
 
 
 # Main game loop
-def game_loop():
+class game_loop():
     clock = pygame.time.Clock()
     game_over = False
     last_obstacle_time = pygame.time.get_ticks()
@@ -148,19 +184,19 @@ def game_loop():
             collider[0].explode()
        
         # Draw everything
-        screen.fill(WHITE)
-        pygame.draw.rect(screen, BLUE, player)
-        obstacles.draw(screen)
+        Game_Settings.screen.fill(Game_Settings.WHITE)
+        pygame.draw.rect(Game_Settings.screen, Game_Settings.BLUE, player)
+        obstacles.draw(Game_Settings.screen)
 
         # Display obstacle count
-        obstacle_text = font.render(f"Obstacles: {obstacle_count}", True, BLACK)
-        screen.blit(obstacle_text, (10, 10))
+        obstacle_text = Game_Settings.font.render(f"Obstacles: {obstacle_count}", True, Game_Settings.BLACK)
+        Game_Settings.screen.blit(obstacle_text, (10, 10))
 
         pygame.display.update()
-        clock.tick(FPS)
+        clock.tick(Game_Settings.FPS)
 
     # Game over screen
-    screen.fill(WHITE)
+    Game_Settings.screen.fill(Game_Settings.WHITE)
 
 if __name__ == "__main__":
     game_loop()
