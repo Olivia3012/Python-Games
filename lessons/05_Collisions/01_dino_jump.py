@@ -10,6 +10,7 @@ import pygame
 import random
 from pathlib import Path
 
+
 # Initialize Pygame
 pygame.init()
 
@@ -60,12 +61,12 @@ class Obstacle(pygame.sprite.Sprite):
         self.rect.y = Game_Settings.HEIGHT - Game_Settings.OBSTACLE_HEIGHT - 10
 
         self.explosion = pygame.image.load(images_dir / "explosion1.gif")
-
     def update(self):
         self.rect.x -= Game_Settings.obstacle_speed
         # Remove the obstacle if it goes off screen
         if self.rect.right < 0:
             self.kill()
+            
 
     def explode(self):
         """Replace the image with an explosition image."""
@@ -80,54 +81,49 @@ class Obstacle(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((Game_Settings.PLAYER_SIZE, Game_Settings.PLAYER_SIZE))
-        self.image.fill(Game_Settings.BLUE)
+        self.image = pygame.image.load(images_dir / "dino_3.png")
+        self.image = pygame.transform.scale(self.image, (Game_Settings.PLAYER_SIZE, Game_Settings.PLAYER_SIZE))
         self.rect = self.image.get_rect()
         self.rect.x = 50
-        self.rect.y = Game_Settings.HEIGHT - Game_Settings.PLAYER_SIZE - 10
+        self.rect.y = Game_Settings.HEIGHT 
         self.speed = Game_Settings.player_speed
-    
+        self.is_jumping = False
+        """Game_Settings.HEIGHT - Game_Settings.PLAYER_SIZE - 10"""
+
+        # For Sprites, the image and rect attributes are part of the Sprite class
+        # and are important. The image is the surface that will be drawn on the screen
+
+       
     def update(self):
         
-        self.velocity = 2
-        self.gravity = 0.5
 
-        self.speed += 0.5
+        self.speed += 1 
+
         self.rect.y += self.speed
         
         keys = pygame.key.get_pressed()
         
 
-        if self.rect.y == 0:
-            is_jumping = True
 
-        else:
-            is_jumping = False
-
-        if is_jumping == True:
-            if keys[pygame.K_SPACE]:
-                self.speed= -10
-                
-        if keys[pygame.K_UP]:
-            self.rect.y -= self.speed
-        if keys[pygame.K_DOWN]:
-            self.rect.y += self.speed
+        if self.is_jumping == False and keys[pygame.K_SPACE]:
+                self.speed = -15
+                self.is_jumping = True
 
         # Keep the player on screen
         if self.rect.top < 0:
             self.rect.top = 0
         if self.rect.bottom > Game_Settings.HEIGHT:
             self.rect.bottom = Game_Settings.HEIGHT
-
-        """if keys[pygame.K_SPACE]:"""
+            self.is_jumping = False
         # Jumping means that the player is going up. The top of the 
         # screen is y=0, and the bottom is y=settings.screen_height. So, to go up,
         # we need to have a negative y velocity
     
         
-            
-
         
+
+        # For Sprites, the image and rect attributes are part of the Sprite class
+        # and are important. The image is the surface that will be drawn on the screen
 
 # Create a player object
 player = Player()
@@ -182,14 +178,16 @@ class game_loop():
         collider = pygame.sprite.spritecollide(player, obstacles, dokill=False)
         if collider:
             collider[0].explode()
-       
+            print(f"You failed! Final score = {obstacle_count}")
+            break
+
         # Draw everything
         Game_Settings.screen.fill(Game_Settings.WHITE)
-        pygame.draw.rect(Game_Settings.screen, Game_Settings.BLUE, player)
         obstacles.draw(Game_Settings.screen)
+        Player.draw
 
         # Display obstacle count
-        obstacle_text = Game_Settings.font.render(f"Obstacles: {obstacle_count}", True, Game_Settings.BLACK)
+        obstacle_text = Game_Settings.font.render(f"Obstacles avoided :) : {obstacle_count}", True, Game_Settings.BLACK)
         Game_Settings.screen.blit(obstacle_text, (10, 10))
 
         pygame.display.update()

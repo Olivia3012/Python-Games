@@ -1,0 +1,10 @@
+answer = str(input("Guess the name!"))
+clue_list = ["four letters", "British", "ELize...", "Grape", "Ask Audrey"]
+correct = "Queen Elizabeth the Grape"
+
+for i in range (5):
+    answer
+    if answer == correct:
+        print("You win!!!")
+    else: 
+        
