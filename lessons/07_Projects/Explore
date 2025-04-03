@@ -1,10 +1,19 @@
 answer = str(input("Guess the name!"))
-clue_list = ["four letters", "British", "ELize...", "Grape", "Ask Audrey"]
+clue_list = ["four words", "British Queen", "Elizabeth", " The Grape", "Ask Audrey"]
 correct = "Queen Elizabeth the Grape"
+n = 0
+y = 1
+class Game_loop:
+    for i in range (5):
+        answer
+        if answer == correct:
+            print("You win!!! Congrats")
+        else: 
+            print(f"Sorry", answer, "is not correct")
+            print(f"Here's a clue to help you:", clue_list[n]) 
+            answer = str(input("Guess the name again!"))
+            n+=1
 
-for i in range (5):
-    answer
-    if answer == correct:
-        print("You win!!!")
-    else: 
-        
+Game_loop
+
+
