@@ -1,13 +1,14 @@
 answer = str(input("Guess the name!"))
-clue_list = ["four words", "British Queen", "Elizabeth", " The Grape", "Ask Audrey"]
+clue_list = ["four words", "British Queen", "Elizabeth", " The Grape", "Ask Audrey", "You cheated!"]
 correct = "Queen Elizabeth the Grape"
 n = 0
 y = 1
 class Game_loop:
-    for i in range (5):
+    for i in range (6):
         answer
         if answer == correct:
             print("You win!!! Congrats")
+            break
         else: 
             print(f"Sorry", answer, "is not correct")
             print(f"Here's a clue to help you:", clue_list[n]) 
@@ -16,4 +17,21 @@ class Game_loop:
 
 Game_loop
 
+class Guess_favorite_food:
+    n = 0
+    response = str(input("Guess my favorite food!"))
+    clue_list = ["White", "Asian", "Delicious and not nutricious", "Aiyah! You do not know your asian food! :("]
+    correct_food = "White rice"
+    for i in range(5):
+        if response == correct_food:
+            print("You know your food! Good job! :)")
+            break
+        else:
+            print(f"Sorry, your answer,", response,", is not correct")
+            print(f"Here's a clue to help you:", clue_list[n]) 
+            response = str(input("Guess my favorite food!"))
+            n+=1
+        
+
+Guess_favorite_food
 
