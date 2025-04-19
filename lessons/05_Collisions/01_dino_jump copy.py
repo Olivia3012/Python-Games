@@ -11,6 +11,7 @@ import random
 from pathlib import Path
 
 
+
 # Initialize Pygame
 pygame.init()
 
@@ -18,7 +19,7 @@ images_dir = Path(__file__).parent / "images" if (Path(__file__).parent / "image
 
 # Screen dimensions.         
 class Game_Settings():
-    WIDTH, HEIGHT = 600, 300
+    WIDTH, HEIGHT = 600, 600
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Dino Jump")
 
@@ -30,7 +31,7 @@ class Game_Settings():
     FPS = 60
 
     # Player attributes
-    PLAYER_SIZE = 50
+    PLAYER_SIZE = 75
 
     player_speed = 5
 
@@ -64,10 +65,10 @@ class Obstacle(pygame.sprite.Sprite):
         self.explosion = pygame.image.load(images_dir / "explosion1.gif")
         if num == 0:
             
-            self.image = pygame.image.load(images_dir / "cactus_9.png")
+            self.image = pygame.image.load(images_dir / "asteroid1.png")
             self.image = pygame.transform.scale(self.image, (Game_Settings.OBSTACLESIZE, Game_Settings.OBSTACLESIZE))
         else:
-            self.image = pygame.image.load(images_dir / "ptero_0.png")
+            self.image = pygame.image.load(images_dir / "asteroid1.png")
             self.image = pygame.transform.scale(self.image, (Game_Settings.OBSTACLESIZE, Game_Settings.OBSTACLESIZE))
             self.rect.y = Game_Settings.HEIGHT - Game_Settings.OBSTACLE_HEIGHT - random.randint(15,125)
 
@@ -97,8 +98,8 @@ class Obstacle(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load(images_dir / "dino_3.png")
-        self.image = pygame.transform.scale(self.image, (Game_Settings.PLAYER_SIZE, Game_Settings.PLAYER_SIZE))
+        self.image = pygame.image.load(images_dir/'alien1.gif')
+        self.image = pygame.transform.scale(self.image, (Game_Settings.PLAYER_SIZE+10, Game_Settings.PLAYER_SIZE))
         self.rect = self.image.get_rect()
         self.rect.x = 50
         self.rect.y = Game_Settings.HEIGHT 
