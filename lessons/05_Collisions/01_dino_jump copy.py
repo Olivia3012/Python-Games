@@ -19,9 +19,9 @@ images_dir = Path(__file__).parent / "images" if (Path(__file__).parent / "image
 
 # Screen dimensions.         
 class Game_Settings():
-    WIDTH, HEIGHT = 600, 600
+    WIDTH, HEIGHT = 600, 550
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("Dino Jump")
+    pygame.display.set_caption("Space Invaders Ripoff")
 
     # Colors
     BLUE = (0, 0, 255)
@@ -44,9 +44,11 @@ class Game_Settings():
     Player_x_velocity = 2
     Player_y_velocity = 2
     Player_gravity = 0.75
-    is_jumping = False
+    """is_jumping = False"""
     JAYDEN_COLOR = (175, 243, 100)
+    JAYDEN_COLOR2 = (213, 10, 21)
     LINE_COLOR = (56, 250, 150)
+    n = 0
 
 
 # Font
@@ -59,26 +61,40 @@ class Obstacle(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface((Game_Settings.OBSTACLE_WIDTH, Game_Settings.OBSTACLE_HEIGHT))
         self.image.fill(Game_Settings.BLACK)
+        self.image = pygame.transform.rotate(self.image, 100)
         self.rect = self.image.get_rect()
         self.rect.x = Game_Settings.WIDTH
         self.rect.y = Game_Settings.HEIGHT - Game_Settings.OBSTACLE_HEIGHT - 23
         self.explosion = pygame.image.load(images_dir / "explosion1.gif")
-        if num == 0:
+        self.angle = random.randint(0, 2)
             
-            self.image = pygame.image.load(images_dir / "asteroid1.png")
-            self.image = pygame.transform.scale(self.image, (Game_Settings.OBSTACLESIZE, Game_Settings.OBSTACLESIZE))
-        else:
-            self.image = pygame.image.load(images_dir / "asteroid1.png")
-            self.image = pygame.transform.scale(self.image, (Game_Settings.OBSTACLESIZE, Game_Settings.OBSTACLESIZE))
-            self.rect.y = Game_Settings.HEIGHT - Game_Settings.OBSTACLE_HEIGHT - random.randint(15,125)
+        self.image = pygame.image.load(images_dir / "asteroid1.png")
+        self.image = pygame.transform.scale(self.image, (Game_Settings.OBSTACLESIZE, Game_Settings.OBSTACLESIZE))
+        self.image = pygame.transform.rotate(self.image, self.angle)
+        self.rect.y = Game_Settings.HEIGHT - Game_Settings.OBSTACLE_HEIGHT - random.randint(25,450)
+        self.velocity = pygame.Vector2(random.randint(-5, 5), random.randint(-5, 5))
+        self.acceleration = pygame.Vector2(random.randint(-5, 5), random.randint(-5, 5))
 
     def update(self):
-        self.rect.x -= Game_Settings.obstacle_speed
+        """self.rect.x -= Game_Settings.obstacle_speed"""
+        self.velocity = pygame.Vector2()
+
+        #self.image = pygame.transform.rotate(self.image, self.angle)
+
+        
         # Remove the obstacle if it goes off screen
         if self.rect.right < 0:
             self.kill()
-            
 
+        self.acceleration[0], self.acceleration[1] = pygame.Vector2(random.randint(-5, 5), random.randint(-5, 5))
+
+        self.velocity += self.acceleration 
+
+        self.rect[0] += self.velocity[0]
+        self.rect[1] += self.velocity[1]
+
+            
+  
     def explode(self):
         """Replace the image with an explosition image."""
         
@@ -102,18 +118,19 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (Game_Settings.PLAYER_SIZE+10, Game_Settings.PLAYER_SIZE))
         self.rect = self.image.get_rect()
         self.rect.x = 50
-        self.rect.y = Game_Settings.HEIGHT 
+        self.rect.y = 300
         self.speed = Game_Settings.player_speed
-        self.is_jumping = False
+        """self.is_jumping = False"""
 
         # For Sprites, the image and rect attributes are part of the Sprite class
         # and are important. The image is the surface that will be drawn on the screen
 
        
     def update(self):
+
         
 
-        self.speed += 1 
+        self.speed += 0.20
 
         self.rect.y += self.speed
         
@@ -121,22 +138,49 @@ class Player(pygame.sprite.Sprite):
         
 
 
-        if self.is_jumping == False and keys[pygame.K_SPACE]:
-                self.speed = -15
+        if keys[pygame.K_UP]:
+                self.speed = -5
                 self.is_jumping = True
 
+        if keys[pygame.K_DOWN]:
+            self.rect.bottom += 2.5
+
+           
         # Keep the player on screen
         if self.rect.top < 0:
             self.rect.top = 0
         if self.rect.bottom > Game_Settings.HEIGHT:
             self.rect.bottom = Game_Settings.HEIGHT
             self.is_jumping = False
+            
         # Jumping means that the player is going up. The top of the 
         # screen is y=0, and the bottom is y=settings.screen_height. So, to go up,
         # we need to have a negative y velocity
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+
+
+class Projectile():
+    def  __init__(self, player):
+        self.position = player.rect.right
+        self.position = x, y
+    
+    def draw(self, surface):
+            pygame.draw.circle(surface, self.settings.colors['red'], Player.x, Player.y, 5)
+        
+    def update(self):
+        
+        keys = pygame.key.get_pressed()
+            
+        if keys[pygame.K_SPACE]:
+            self.position.x += 100000
+        
+
+
+
+    
+
     
         
         
@@ -148,8 +192,10 @@ class Player(pygame.sprite.Sprite):
 player = Player()
 player_group = pygame.sprite.GroupSingle(player)
 
+
 # Add obstacles periodically
-def add_obstacle(obstacles):
+def add_obstacle(obstacles, Game_Settings):
+   
     # random.random() returns a random float between 0 and 1, so a value
     # of 0.25 means that there is a 25% chance of adding an obstacle. Since
     # add_obstacle() is called every 100ms, this means that on average, an
@@ -161,6 +207,9 @@ def add_obstacle(obstacles):
         n = random.randint(0,1)
         obstacle = Obstacle(n)
         obstacles.add(obstacle)
+        n+=1
+        print(n)
+        
 
         return 1
     return 0
@@ -193,10 +242,11 @@ class game_loop():
             # Add obstacles and update
             if pygame.time.get_ticks() - last_obstacle_time > 500:
                 last_obstacle_time = pygame.time.get_ticks()
-                obstacle_count += add_obstacle(obstacles)
+                obstacle_count += add_obstacle(obstacles, Game_Settings)
                 
             
             obstacles.update()
+            """ Projectile.update()"""
 
             # Check for collisions
             collider = pygame.sprite.spritecollide(player, obstacles, dokill=False)
@@ -209,12 +259,13 @@ class game_loop():
                 
 
             # Draw everything
-            Game_Settings.screen.fill(Game_Settings.WHITE)
+            Game_Settings.screen.fill(Game_Settings.BLACK)
             initial_position = (0, Game_Settings.HEIGHT-5)
             end_position = (Game_Settings.WIDTH, Game_Settings.HEIGHT-5)
             pygame.draw.line(Game_Settings.screen ,Game_Settings.BLACK, initial_position, end_position, 2)
             player.draw(Game_Settings.screen)
             obstacles.draw(Game_Settings.screen)
+            
 
             # Display obstacle count
             obstacle_text = Game_Settings.font.render(f"Obstacles avoided :) : {obstacle_count}", True, Game_Settings.BLACK)
@@ -229,11 +280,13 @@ class game_loop():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
-            Game_Settings.screen.fill(Game_Settings.JAYDEN_COLOR)
+            Game_Settings.screen.fill(Game_Settings.JAYDEN_COLOR2)
             obstacle_text = Game_Settings.font.render(f"            Nice try, you avoided {obstacle_count} obstacle(s).", True, Game_Settings.WHITE)
-            obstacle_text2 = Game_Settings.font.render("            Press space to restart!", True, Game_Settings.WHITE)
+            obstacle_text2 = Game_Settings.font.render("            Press 'space' to restart!", True, Game_Settings.WHITE)
             Game_Settings.screen.blit(obstacle_text, (10, 180))
             Game_Settings.screen.blit(obstacle_text2, (10, 215))
+            obstacle_text3 = Game_Settings.font.render("            Jayden says to do better next time! >:)", True, Game_Settings.WHITE)
+            Game_Settings.screen.blit(obstacle_text3, (10, 275))
             pygame.display.update()
             clock.tick(Game_Settings.FPS)
         
