@@ -49,6 +49,7 @@ class Game_Settings():
     JAYDEN_COLOR2 = (213, 10, 21)
     LINE_COLOR = (56, 250, 150)
     n = 0
+    PROJECTILE_SIZE = 20
 
 
 # Font
@@ -72,7 +73,7 @@ class Obstacle(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (Game_Settings.OBSTACLESIZE, Game_Settings.OBSTACLESIZE))
         self.image = pygame.transform.rotate(self.image, self.angle)
         self.rect.y = Game_Settings.HEIGHT - Game_Settings.OBSTACLE_HEIGHT - random.randint(25,450)
-        self.velocity = pygame.Vector2(random.randint(-5, 5), random.randint(-5, 5))
+        self.velocity = pygame.Vector2(random.randint(-10, 1), random.randint(-5, 5))
         self.acceleration = pygame.Vector2(random.randint(-5, 5), random.randint(-5, 5))
 
     def update(self):
@@ -119,6 +120,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = 50
         self.rect.y = 300
+        self.position = (self.rect.x, self.rect.y)
         self.speed = Game_Settings.player_speed
         """self.is_jumping = False"""
 
@@ -128,11 +130,10 @@ class Player(pygame.sprite.Sprite):
        
     def update(self):
 
-        
-
         self.speed += 0.20
 
         self.rect.y += self.speed
+
         
         keys = pygame.key.get_pressed()
         
@@ -145,13 +146,35 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_DOWN]:
             self.rect.bottom += 2.5
 
+        if keys[pygame.K_RIGHT]:
+            self.rect.x += 5
+
+        if keys[pygame.K_LEFT]:
+            self.rect.x-=5
+
            
         # Keep the player on screen
-        if self.rect.top < 0:
-            self.rect.top = 0
+        """if self.rect.top < 0:
+            self.rect.top = 0"""
         if self.rect.bottom > Game_Settings.HEIGHT:
             self.rect.bottom = Game_Settings.HEIGHT
             self.is_jumping = False
+
+        if self.rect.right > Game_Settings.WIDTH:
+            self.rect.left = 1
+
+        if self.rect.left < 0:
+            self.rect.right = Game_Settings.WIDTH - 2
+
+        if self.rect.bottom > Game_Settings.HEIGHT:
+            self.rect.top = 2
+
+        if self.rect.top < 0:
+            self.rect.bottom = Game_Settings.HEIGHT - 2
+        
+
+        self.position = (self.rect.x, self.rect.y)
+    
             
         # Jumping means that the player is going up. The top of the 
         # screen is y=0, and the bottom is y=settings.screen_height. So, to go up,
@@ -161,29 +184,34 @@ class Player(pygame.sprite.Sprite):
         screen.blit(self.image, self.rect)
 
 
-class Projectile():
-    def  __init__(self, player):
-        self.position = player.rect.right
-        self.position = x, y
+class Projectile(pygame.sprite.Sprite):
+    def  __init__(self, position):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface(position)
+        self.rect = self.image.get_rect()
+        """self.position = Player[0], Player[1]"""
+        self.rect = self.image.get_rect()
+        
     
     def draw(self, surface):
-            pygame.draw.circle(surface, self.settings.colors['red'], Player.x, Player.y, 5)
+            pygame.draw.circle(surface, Game_Settings.JAYDEN_COLOR2, self.rect[0], self.rect[1], 5)
         
     def update(self):
-        
-        keys = pygame.key.get_pressed()
-            
-        if keys[pygame.K_SPACE]:
-            self.position.x += 100000
-        
 
+        self.rect[0] += 10
 
+        if self.rect[0] > Game_Settings.WIDTH:
+            self.kill
 
+"""class Health_Bar():
     
+    def draw():
+        pygame.draw.rect"""
 
-    
+
+
         
-        
+
 
         # For Sprites, the image and rect attributes are part of the Sprite class
         # and are important. The image is the surface that will be drawn on the screen
@@ -208,7 +236,7 @@ def add_obstacle(obstacles, Game_Settings):
         obstacle = Obstacle(n)
         obstacles.add(obstacle)
         n+=1
-        print(n)
+        
         
 
         return 1
@@ -225,6 +253,8 @@ class game_loop():
         # Group for obstacles
         obstacles = pygame.sprite.Group()
 
+        projectiles = pygame.sprite.Group()
+
         player = Player()
 
         obstacle_count = 0
@@ -238,15 +268,21 @@ class game_loop():
 
             # Update player
             player.update()
-
+          
             # Add obstacles and update
             if pygame.time.get_ticks() - last_obstacle_time > 500:
                 last_obstacle_time = pygame.time.get_ticks()
                 obstacle_count += add_obstacle(obstacles, Game_Settings)
+
+            keys = pygame.key.get_pressed()
+            
+            if keys[pygame.K_SPACE]:
+                projectiles.add(Projectile(player.position))
+                    
                 
             
             obstacles.update()
-            """ Projectile.update()"""
+            projectiles.update()
 
             # Check for collisions
             collider = pygame.sprite.spritecollide(player, obstacles, dokill=False)
@@ -265,6 +301,9 @@ class game_loop():
             pygame.draw.line(Game_Settings.screen ,Game_Settings.BLACK, initial_position, end_position, 2)
             player.draw(Game_Settings.screen)
             obstacles.draw(Game_Settings.screen)
+            projectiles.draw(Game_Settings.screen)
+            
+            
             
 
             # Display obstacle count
@@ -274,7 +313,7 @@ class game_loop():
             pygame.display.update()
             clock.tick(Game_Settings.FPS)
     
-        # Game over screen
+        #Game over screen
         while game_over == True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -282,7 +321,7 @@ class game_loop():
                     quit()
             Game_Settings.screen.fill(Game_Settings.JAYDEN_COLOR2)
             obstacle_text = Game_Settings.font.render(f"            Nice try, you avoided {obstacle_count} obstacle(s).", True, Game_Settings.WHITE)
-            obstacle_text2 = Game_Settings.font.render("            Press 'space' to restart!", True, Game_Settings.WHITE)
+            obstacle_text2 = Game_Settings.font.render("            Press 'c' to continue!", True, Game_Settings.WHITE)
             Game_Settings.screen.blit(obstacle_text, (10, 180))
             Game_Settings.screen.blit(obstacle_text2, (10, 215))
             obstacle_text3 = Game_Settings.font.render("            Jayden says to do better next time! >:)", True, Game_Settings.WHITE)
@@ -292,7 +331,7 @@ class game_loop():
         
             if game_over == True:
                 keys = pygame.key.get_pressed()
-                if keys[pygame.K_SPACE]:
+                if keys[pygame.K_c]:
                     game_over = False
 
                 
