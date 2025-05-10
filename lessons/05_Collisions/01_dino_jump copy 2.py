@@ -50,6 +50,8 @@ class Game_Settings():
     LINE_COLOR = (56, 250, 150)
     n = 0
     PROJECTILE_SIZE = 100
+    HEALTH_BAR_SIZE_X = 40
+    HEALTH_BAR_SIZE_Y = 10
 
 
 # Font
@@ -173,7 +175,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = Game_Settings.HEIGHT - 2
         
 
-        self.position = (self.rect.x, self.rect.y)
+        """pygame.draw.rect(Game_Settings.screen, Game_Settings.JAYDEN_COLOR, (Game_Settings.HEALTH_BAR_SIZE_X, Game_Settings.HEALTH_BAR_SIZE_Y, Game_Settings.HEALTH_BAR_SIZE_X, Game_Settings.HEALTH_BAR_SIZE_Y))"""
     
             
         # Jumping means that the player is going up. The top of the 
@@ -204,10 +206,7 @@ class Projectile(pygame.sprite.Sprite):
         if self.rect[0] > Game_Settings.WIDTH:
             self.kill
 
-"""class Health_Bar():
-    
-    def draw():
-        pygame.draw.rect"""
+
 
 
 
@@ -289,10 +288,10 @@ class game_loop():
             collider = pygame.sprite.spritecollide(player, obstacles, dokill=False)
             
             if collider:
-                collider[0].explode()
+                """collider[0].explode()
                 print(f"Good try! Final score = {obstacle_count}")
-                game_over=True
-
+                game_over=True"""
+                
             
 
             
