@@ -49,7 +49,7 @@ class Game_Settings():
     JAYDEN_COLOR2 = (213, 10, 21)
     LINE_COLOR = (56, 250, 150)
     n = 0
-    PROJECTILE_SIZE = 100
+    PROJECTILE_SIZE = 10
 
 
 # Font
@@ -87,7 +87,7 @@ class Obstacle(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.kill()
 
-        self.acceleration[0], self.acceleration[1] = pygame.Vector2(random.randint(-15, 15), random.randint(-5, 5))
+        self.acceleration[0], self.acceleration[1] = pygame.Vector2(random.randint(-5, -1), random.randint(-5, 5))
 
         self.velocity += self.acceleration 
 
@@ -271,7 +271,7 @@ class game_loop():
             player.update()
           
             # Add obstacles and update
-            if pygame.time.get_ticks() - last_obstacle_time > 1:
+            if pygame.time.get_ticks() - last_obstacle_time > 100:
                 last_obstacle_time = pygame.time.get_ticks()
                 obstacle_count += add_obstacle(obstacles, Game_Settings)
 
