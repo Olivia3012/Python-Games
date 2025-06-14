@@ -37,7 +37,7 @@ class Game_Settings():
 
     # Obstacle attributes
     OBSTACLE_WIDTH = 10
-    OBSTACLE_HEIGHT = 22
+    OBSTACLE_HEIGHT =    22
     OBSTACLESIZE = 48
     obstacle_speed = 5
 
@@ -49,7 +49,7 @@ class Game_Settings():
     JAYDEN_COLOR2 = (213, 10, 21)
     LINE_COLOR = (56, 250, 150)
     n = 0
-    PROJECTILE_SIZE = 10
+    PROJECTILE_SIZE = 5
 
 
 # Font
@@ -170,7 +170,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 2
 
         if self.rect.top < 0:
-            self.rect.bottom = Game_Settings.HEIGHT - 2
+            self.rect.top = 0
         
 
         self.position = (self.rect.x, self.rect.y)
