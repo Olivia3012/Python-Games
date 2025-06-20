@@ -7,32 +7,56 @@ pygame.init()
 screen_width = 600
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('Tiled Color Background')
+pygame.display.set_caption('Tiled Color Background + scroll')
+background1_x = 0
+background2_x = 600
 
 
-def tile_colors(screen):
+def tile_colors(screen, num_tiles):
     image = pygame.Surface([screen_width, screen_height])
-    tile = pygame.Surface((screen_width/6, screen_height))
-    for i in range(6):
-        tile.fill((random.randint(0, 256), random.randint(0, 256), random.randint(0, 256)))
-        image.blit(tile, (i*(screen.get_width()/6), 0))
+    tile = pygame.Surface((screen_width/num_tiles, screen_height))
+    
+    for i in range(num_tiles):
+        tile.fill((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+        image.blit(tile, (i*(screen.get_width()/num_tiles), 0))
+        
 
     return image
     
 
-background = tile_colors(screen)
+background1 = tile_colors(screen, 11)
+background2 = tile_colors(screen, 11)
 
+
+        
+    
 # Main loop
+clock = pygame.time.Clock()
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    screen.blit(background,(0,0))
+    
+
+    screen.blit(background1,(background1_x, 0))
+    screen.blit(background2, (background2_x, 0))
+
+    background1_x -= 1
+    background2_x -= 10
+
+    if background1_x  < -600 :
+        background1_x = 600
+
+    if background2_x < -600 :
+        background2_x = 600
+    
+    
 
     # Update the display
     pygame.display.flip()
+    clock.tick(60)
 
 # Quit Pygame
 pygame.quit()
