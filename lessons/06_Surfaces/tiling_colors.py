@@ -24,8 +24,8 @@ def tile_colors(screen, num_tiles):
     return image
     
 
-background1 = tile_colors(screen, 11)
-background2 = tile_colors(screen, 11)
+background1 = tile_colors(screen, 100)
+background2 = tile_colors(screen, 100)
 
 
         
@@ -43,7 +43,7 @@ while running:
     screen.blit(background1,(background1_x, 0))
     screen.blit(background2, (background2_x, 0))
 
-    background1_x -= 1
+    background1_x -= 2
     background2_x -= 10
 
     if background1_x  < -600 :

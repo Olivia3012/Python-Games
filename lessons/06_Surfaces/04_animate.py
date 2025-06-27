@@ -3,6 +3,7 @@ from jtlgames.spritesheet import SpriteSheet
 from pathlib import Path
 
 images = Path(__file__).parent / 'images'
+color = (255, 51, 255)
 
 
 def scale_sprites(sprites, scale):
@@ -23,7 +24,7 @@ def main():
 
     # Set up the display
     screen = pygame.display.set_mode((640, 480))
-    pygame.display.set_caption("Sprite Animation Test")
+    pygame.display.set_caption("Frog jump game")
 
     # Load the sprite sheet
     filename = images / 'spritesheet.png'  # Replace with your actual file path
@@ -32,8 +33,8 @@ def main():
 
 
     # Load a strip sprites
-    frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 4)
-    allig_sprites = scale_sprites(spritesheet.load_strip( (0,4), 7, colorkey=-1), 4)
+    frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 1)
+    allig_sprites = scale_sprites(spritesheet.load_strip( (0, 4), 7, colorkey=-1), 2)
 
     # Compose an image
     log = spritesheet.compose_horiz([24, 25, 26], colorkey=-1)
@@ -42,13 +43,37 @@ def main():
     # Variables for animation
     frog_index = 0
     allig_index = 0
-    frames_per_image = 6
+    frames_per_image = 5
     frame_count = 0
+    
+            
+    frog_position_x = 300
+    frog_position_y = 300
+
+    log_position_x = 50
+    log_position_y = 300
+
+    alligator_position_x = 50
+    alligator_position_y = 7
+
+    
 
     # Main game loop
     running = True
     
-    sprite_rect = frog_sprites[0].get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    frog_sprite_rect = frog_sprites[0].get_rect()
+    frog_sprite_rect[0] = frog_position_x
+    frog_sprite_rect[1] = frog_position_y
+
+    log_sprite_rect = log.get_rect()
+    log_sprite_rect[0] = log_position_x
+    log_sprite_rect[1] = log_position_y
+
+    alligator_sprite_rect = allig_sprites[0].get_rect()
+    alligator_sprite_rect[0] = alligator_position_x
+    alligator_sprite_rect[1] = alligator_position_y
+
+    end_pos = frog_sprite_rect.center - pygame.Vector2(0, 50)
     
     pygame.math.Vector2(1, 0)
     def draw_alligator(alligator, index):
@@ -87,12 +112,19 @@ def main():
         # Get the current sprite and display it in the middle of the screen
 
         
-        screen.blit(frog_sprites[frog_index], sprite_rect)
+        screen.blit(frog_sprites[frog_index], frog_sprite_rect)
 
         composed_alligator = draw_alligator(allig_sprites, allig_index)
-        screen.blit(composed_alligator,  sprite_rect.move(0, 100))
+        screen.blit(composed_alligator,  alligator_sprite_rect.move(0, 100))
 
-        screen.blit(log,  sprite_rect.move(0, -100))
+        screen.blit(log,  log_sprite_rect.move(0, -100))
+
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_SPACE]:
+                frog_sprite_rect = end_pos
+
+        pygame.draw.line(screen, color, frog_sprite_rect.center - pygame.Vector2(1, 0), end_pos, width=1)
 
 
         # Update the display
