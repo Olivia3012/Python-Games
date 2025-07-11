@@ -248,6 +248,7 @@ class Player:
         end_position = self.pos + self.v_jump * self.LENGTH * 100
         pygame.draw.line(screen ,Colors.LINE_COLOR, initial_position, end_position, 2)
         
+        
         self.game.vec_to_center(self.pos)
         self.gravity = self.game.vec_to_center(self.pos) * 0.001
         v = self.gravity 

@@ -24,8 +24,8 @@ def tile_colors(screen, num_tiles):
     return image
     
 
-background1 = tile_colors(screen, 100)
-background2 = tile_colors(screen, 100)
+background1 = tile_colors(screen, 8)
+background2 = tile_colors(screen, 11)
 
 
         

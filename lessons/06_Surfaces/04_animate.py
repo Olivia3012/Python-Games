@@ -11,7 +11,7 @@ def scale_sprites(sprites, scale):
 
     Args:
         sprites (list): List of pygame.Surface objects.
-        scale (int): Scale factor.
+        scale (int): Scale factor. 
 
     Returns:
         list: List of scaled pygame.Surface objects.
@@ -33,12 +33,12 @@ def main():
 
 
     # Load a strip sprites
-    frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 1)
-    allig_sprites = scale_sprites(spritesheet.load_strip( (0, 4), 7, colorkey=-1), 2)
+    frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 2)
+    allig_sprites = scale_sprites(spritesheet.load_strip( (0, 4), 7, colorkey=-1), 3)
 
     # Compose an image
     log = spritesheet.compose_horiz([24, 25, 26], colorkey=-1)
-    log = pygame.transform.scale(log, (log.get_width() * 4, log.get_height() * 4))
+    log = pygame.transform.scale(log, (log.get_width() * 3, log.get_height() * 3))
 
     # Variables for animation
     frog_index = 0
@@ -48,13 +48,13 @@ def main():
     
             
     frog_position_x = 300
-    frog_position_y = 300
+    frog_position_y = 250
 
     log_position_x = 50
     log_position_y = 300
 
-    alligator_position_x = 50
-    alligator_position_y = 7
+    alligator_position_x = 25
+    alligator_position_y = 300
 
     
 
@@ -73,7 +73,7 @@ def main():
     alligator_sprite_rect[0] = alligator_position_x
     alligator_sprite_rect[1] = alligator_position_y
 
-    end_pos = frog_sprite_rect.center - pygame.Vector2(0, 50)
+    
     
     pygame.math.Vector2(1, 0)
     def draw_alligator(alligator, index):
@@ -98,7 +98,8 @@ def main():
         composed_image.blit(alligator[(index + 2) % len(alligator)], (width * 2, 0))
 
         return composed_image
-    
+    line_start_pos = pygame.Vector2(frog_position_x+15, frog_position_y)
+    line_end_pos = pygame.Vector2(frog_position_x+15, frog_position_y - 100)
     while running:
         screen.fill((0, 0, 139))  # Clear screen with deep blue
 
@@ -112,19 +113,36 @@ def main():
         # Get the current sprite and display it in the middle of the screen
 
         
-        screen.blit(frog_sprites[frog_index], frog_sprite_rect)
+        screen.blit(frog_sprites[frog_index], frog_sprite_rect) 
 
         composed_alligator = draw_alligator(allig_sprites, allig_index)
         screen.blit(composed_alligator,  alligator_sprite_rect.move(0, 100))
 
         screen.blit(log,  log_sprite_rect.move(0, -100))
+        screen.blit(log,  log_sprite_rect.move(210, -10))
+        screen.blit(log,  log_sprite_rect.move(300, -175))
 
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_SPACE]:
-                frog_sprite_rect = end_pos
+        
+        
+        pygame.draw.line(screen, color, line_start_pos, line_end_pos, width=1)
+        
+        frog_end_pos = line_end_pos
 
-        pygame.draw.line(screen, color, frog_sprite_rect.center - pygame.Vector2(1, 0), end_pos, width=1)
+        if keys[pygame.K_SPACE]:
+                frog_sprite_rect = frog_end_pos
+                print("Working")
+
+        
+
+        if keys[pygame.K_RIGHT]:
+            new_line = (line_end_pos - line_start_pos).rotate(3)
+            line_end_pos = line_start_pos + new_line
+            print("Working")
+            
+
+               
 
 
         # Update the display
