@@ -325,6 +325,7 @@ class game_loop():
             if Game_Settings.HEALTH_BAR_SIZE_X < 0:
                 game_over = True
                 
+                
 
                 
             

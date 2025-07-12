@@ -4,6 +4,7 @@ from pathlib import Path
 
 images = Path(__file__).parent / 'images'
 color = (255, 51, 255)
+lilly_color = (8, 201, 27)
 
 
 def scale_sprites(sprites, scale):
@@ -56,6 +57,8 @@ def main():
     alligator_position_x = 25
     alligator_position_y = 300
 
+    line_length = 75
+
     
 
     # Main game loop
@@ -73,6 +76,8 @@ def main():
     alligator_sprite_rect[0] = alligator_position_x
     alligator_sprite_rect[1] = alligator_position_y
 
+   """ def Frog(pygame.sprite.Sprite):
+        """
     
     
     pygame.math.Vector2(1, 0)
@@ -98,8 +103,12 @@ def main():
         composed_image.blit(alligator[(index + 2) % len(alligator)], (width * 2, 0))
 
         return composed_image
+    
     line_start_pos = pygame.Vector2(frog_position_x+15, frog_position_y)
-    line_end_pos = pygame.Vector2(frog_position_x+15, frog_position_y - 100)
+    line_end_pos = pygame.Vector2(frog_position_x+15, frog_position_y - line_length)
+    jumping = False
+    new_line = pygame.Vector2(line_end_pos - line_start_pos)
+    
     while running:
         screen.fill((0, 0, 139))  # Clear screen with deep blue
 
@@ -126,26 +135,42 @@ def main():
 
         
         
-        pygame.draw.line(screen, color, line_start_pos, line_end_pos, width=1)
+        frog_jump_line = pygame.draw.line(screen, color, line_start_pos, line_end_pos, width=2)
+
+        lilly_pad = pygame.draw.circle(screen, lilly_color, line_end_pos, 15) 
         
         frog_end_pos = line_end_pos
-
-        if keys[pygame.K_SPACE]:
-                frog_sprite_rect = frog_end_pos
-                print("Working")
-
-        
-
+                
+                
         if keys[pygame.K_RIGHT]:
-            new_line = (line_end_pos - line_start_pos).rotate(3)
+            new_line = (line_end_pos - line_start_pos).rotate(4)
             line_end_pos = line_start_pos + new_line
-            print("Working")
             
 
-               
+        if keys[pygame.K_LEFT]:
+            print(line_end_pos, line_start_pos)
+            new_line = (line_end_pos - line_start_pos).rotate(-4)
+            line_end_pos = line_start_pos + new_line
 
+        if keys[pygame.K_SPACE]:
+            if jumping == False:
+                frog_sprite_rect = frog_end_pos
+                line_start_pos = pygame.Vector2(frog_sprite_rect[0], frog_sprite_rect[1])
+                line_end_pos = pygame.Vector2(line_start_pos[0] + new_line[0], line_start_pos[1] + new_line[1])
+                print("working")
+                jumping = True
 
-        # Update the display
+        else:
+            jumping = False
+
+        """collider = pygame.sprite.groupcollide(frog_sprite_rect, log_sprite_rect, True, True, collided = None)
+        if collider:
+            print("You have been stunned, so your jump length is smaller.")
+            line_lenth -= 25"""
+            
+            
+
+         # Update the display
         pygame.display.flip()
 
         # Handle events
