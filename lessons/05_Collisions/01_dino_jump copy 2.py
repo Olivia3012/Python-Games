@@ -49,8 +49,8 @@ class Game_Settings():
     JAYDEN_COLOR2 = (213, 10, 21)
     LINE_COLOR = (56, 250, 150)
     n = 0
-    PROJECTILE_SIZE = 25
-    HEALTH_BAR_SIZE_X = 150
+    PROJECTILE_SIZE = 50
+    HEALTH_BAR_SIZE_X = 250
     HEALTH_BAR_SIZE_Y = 25
     BAR_COLOR = (5, 159, 212)
 
