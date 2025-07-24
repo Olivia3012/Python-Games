@@ -7,6 +7,12 @@ images = Path(__file__).parent / 'images'
 color = (255, 51, 255)
 lilly_color = (29, 173, 75)
 lilly_inside_color = (255, 51, 255)
+frame_count = 0
+frames_per_image = 5
+pygame.font.init()
+font = pygame.font.SysFont("nssigwriting", 36)
+print(pygame.font.get_fonts())
+
 
 def scale_sprites(sprites, scale):
     """Scale a list of sprites by a given factor.
@@ -19,24 +25,36 @@ def scale_sprites(sprites, scale):
         list: List of scaled pygame.Surface objects.    """
     return [pygame.transform.scale(sprite, (sprite.get_width() * scale, sprite.get_height() * scale)) for sprite in sprites]
 
-
 class Frog(pygame.sprite.Sprite):
     def __init__(self):
         filename = images / 'spritesheet.png'  # Replace with your actual file path
         cellsize = (16, 16)  # Replace with the size of your sprites
         spritesheet = SpriteSheet(filename, cellsize)
-        self.frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 2)
+        self.frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 20)
         self.image = self.frog_sprites[0]
         self.frog_position_x = 300
         self.frog_position_y = 250
-        self.rect = self.image[0].get_rect()
+        self.rect = self.image.get_rect()
         self.rect[0] = self.frog_position_x
         self.rect[1] = self.frog_position_y
+        self.frog_index = 0
+        
+    def update(self):
+        #print(frame_count + 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+        if frame_count % frames_per_image == 0: 
+            self.frog_index = (self.frog_index + 1) % len(self.frog_sprites)
+            self.image = self.frog_sprites[self.frog_index]
 
-frog = Frog()
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+            
+
+
 
 
 def main():
+    global frame_count
+    
     # Initialize Pygame
     pygame.init()
 
@@ -49,7 +67,7 @@ def main():
     cellsize = (16, 16)  # Replace with the size of your sprites
     spritesheet = SpriteSheet(filename, cellsize)
 
-
+    frog = Frog()
     # Load a strip sprites
     """frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 2)"""
     allig_sprites = scale_sprites(spritesheet.load_strip( (0, 4), 7, colorkey=-1), 3)
@@ -61,7 +79,7 @@ def main():
     # Variables for animation
     allig_index = 0
     frames_per_image = 5
-    frame_count = 0
+ 
     
     log_position_x = 50
     log_position_y = 300
@@ -109,8 +127,8 @@ def main():
 
         return composed_image
     
-    line_start_pos = pygame.Vector2(Frog.frog_position_x+15, Frog.frog_position_y)
-    line_end_pos = pygame.Vector2(Frog.frog_position_x+15, Frog.frog_position_y - line_length)
+    line_start_pos = pygame.Vector2(frog.frog_position_x+15, frog.frog_position_y)
+    line_end_pos = pygame.Vector2(frog.frog_position_x+15, frog.frog_position_y - line_length)
     jumping = False
     new_line = pygame.Vector2(line_end_pos - line_start_pos)
     n1 =167
@@ -127,13 +145,13 @@ def main():
         frame_count += 1
         
         if frame_count % frames_per_image == 0: 
-            frog_index = (frog_index + 1) % len(frog_sprites)
+            """frog_index = (frog_index + 1) % len(frog.frog_sprites)"""
             allig_index = (allig_index + 1) % len(allig_sprites)
         
         # Get the current sprite and display it in the middle of the screen
 
         lilly_pad2 = pygame.draw.circle(screen, lilly_color, (line_start_pos[0] + 0.8, line_start_pos[1] + 10), 15)
-        screen.blit(frog_sprites[frog_index], frog_sprite_rect) 
+        """screen.blit(frog.frog_sprites[frog_index], frog_sprite_rect)""" 
 
         
         
@@ -143,6 +161,9 @@ def main():
         screen.blit(log,  log_sprite_rect.move(0, -100))
         screen.blit(log,  log_sprite_rect.move(210, -15))
         screen.blit(log,  log_sprite_rect.move(300, -250))
+
+        frog.update()
+        frog.draw(screen)
 
         keys = pygame.key.get_pressed()
 
@@ -181,17 +202,17 @@ def main():
         if n5 > 640:
             n5 = 0
         
-        if frog_sprite_rect[0] > 640:
-            frog_sprite_rect[0] = 630
+        if frog.rect[0] > 640:
+            frog.rect[0] = 630
             print("Jump line is off the map!")
-        if frog_sprite_rect[0] < 0:
-            frog_sprite_rect[0] = 10
+        if frog.rect[0] < 0:
+            frog.rect[0] = 10
             print("Jump line is off the map!")
-        if frog_sprite_rect[1] > 600:
-            frog_sprite_rect[1] = 470
+        if frog.rect[1] > 600:
+            frog.rect[1] = 470
             print("Jump line is off the map!")
-        if frog_sprite_rect[1] < 0:
-            frog_sprite_rect[1] = 10
+        if frog.rect[1] < 0:
+            frog.rect[1] = 10
             print("Jump line is off the map!")
         
         frog_end_pos = line_end_pos
@@ -205,10 +226,11 @@ def main():
         if keys[pygame.K_RIGHT]:
             new_line = (line_end_pos - line_start_pos).rotate(4)
             line_end_pos = line_start_pos + new_line
+            print("Going right")
             
 
         if keys[pygame.K_LEFT]:
-            print(line_end_pos, line_start_pos)
+            print("Going left")
             new_line = (line_end_pos - line_start_pos).rotate(-4)
             line_end_pos = line_start_pos + new_line
 
@@ -216,8 +238,8 @@ def main():
             if jumping == False:
                 """frog_sprite_rect[0] = frog_end_pos[0] + 15
                 frog_sprite_rect[1] = frog_end_pos[1]"""
-                frog_sprite_rect = frog_end_pos
-                line_start_pos = pygame.Vector2(frog_sprite_rect[0], frog_sprite_rect[1])
+                frog.rect = frog_end_pos
+                line_start_pos = pygame.Vector2(frog.rect[0], frog.rect[1])
                 line_end_pos = pygame.Vector2(line_start_pos[0] + new_line[0], line_start_pos[1] + new_line[1])
                 print("working")
                 jumping = True
@@ -231,9 +253,9 @@ def main():
             print("You have been stunned, so your jump length is smaller.")
             line_lenth -= 25"""
         
-        
-            
-            
+           
+        text = font.render("phrogger game", True, (0, 0, 0))
+        screen.blit(text, (10, 25))  
 
          # Update the display
         pygame.display.flip()
