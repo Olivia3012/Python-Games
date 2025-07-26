@@ -10,8 +10,9 @@ lilly_inside_color = (255, 51, 255)
 frame_count = 0
 frames_per_image = 5
 pygame.font.init()
-font = pygame.font.SysFont("nssigwriting", 36)
+font = pygame.font.SysFont("nototraditionalnushu", 30)
 print(pygame.font.get_fonts())
+GameOver = False  
 
 
 def scale_sprites(sprites, scale):
@@ -26,27 +27,72 @@ def scale_sprites(sprites, scale):
     return [pygame.transform.scale(sprite, (sprite.get_width() * scale, sprite.get_height() * scale)) for sprite in sprites]
 
 class Frog(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, x, y):
+        super().__init__()
         filename = images / 'spritesheet.png'  # Replace with your actual file path
         cellsize = (16, 16)  # Replace with the size of your sprites
         spritesheet = SpriteSheet(filename, cellsize)
-        self.frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 20)
+        self.frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 2)
         self.image = self.frog_sprites[0]
-        self.frog_position_x = 300
-        self.frog_position_y = 250
+        self.frog_position_x = x
+        self.frog_position_y = y
         self.rect = self.image.get_rect()
         self.rect[0] = self.frog_position_x
         self.rect[1] = self.frog_position_y
         self.frog_index = 0
         
     def update(self):
-        #print(frame_count + 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
+        print(frame_count + 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
         if frame_count % frames_per_image == 0: 
-            self.frog_index = (self.frog_index + 1) % len(self.frog_sprites)
+            self.frog_index = (self.frog_index + 1) % len(self.frog_sprites)                                      
             self.image = self.frog_sprites[self.frog_index]
+    
 
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
+class Alligator(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        filename = images / 'spritesheet.png'  # Replace with your actual file path
+        cellsize = (16, 16)  # Replace with the size of your sprites
+        spritesheet = SpriteSheet(filename, cellsize)
+        self.allig_sprites = scale_sprites(spritesheet.load_strip( (0, 4), 7, colorkey=-1), 3)
+        self.rect = self.allig_sprites[0].get_rect()
+        self.rect[0] = 25
+        self.rect[1] = 300
+        self.rect[2] = 48
+        self.rect[3] = 16 * 3
+        self.allig_index = 0
+
+        width = self.rect[2]
+        height = self.rect[3]
+        composed_image = pygame.Surface((width * 3, height), pygame.SRCALPHA)
+
+        composed_image.blit(self.allig_sprites[0], (0, 0))
+        composed_image.blit(self.allig_sprites[1], (width, 0))
+        composed_image.blit(self.allig_sprites[2], (width * 2, 0))
+
+        self.image = composed_image
+
+
+    def draw_alligator(self, alligator, index):
+        
+        index = index % (len(alligator)-2)
+
+        width = self.rect[2]
+        height = self.rect[3]
+        composed_image = pygame.Surface((width * 3, height), pygame.SRCALPHA)
+        print(pygame.SRCALPHA)
+
+        composed_image.blit(self.allig_sprites[0], (0, 0))
+        composed_image.blit(self.allig_sprites[1], (width, 0))
+        composed_image.blit(self.allig_sprites[(index + 2) % len(self.allig_sprites)], (width * 2, 0))
+
+        self.image = composed_image
+    
+    def update(self):
+        if frame_count % frames_per_image == 0: 
+                self.allig_index = (self.allig_index + 1) % len(self.allig_sprites)
+        self.draw_alligator(self.allig_sprites, self.allig_index)
+        print("working")
             
 
 
@@ -67,25 +113,32 @@ def main():
     cellsize = (16, 16)  # Replace with the size of your sprites
     spritesheet = SpriteSheet(filename, cellsize)
 
-    frog = Frog()
+    frog = Frog(100, 100)
+    grog = Frog(200, 100)
+
+    frog_group = pygame.sprite.Group()
+    frog_group.add(frog)
+    frog_group.add(grog)
+    
+    alligator = Alligator()
+    alligator_group = pygame.sprite.GroupSingle(alligator)
     # Load a strip sprites
-    """frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 2)"""
-    allig_sprites = scale_sprites(spritesheet.load_strip( (0, 4), 7, colorkey=-1), 3)
+    """allig_sprites = scale_sprites(spritesheet.load_strip( (0, 4), 7, colorkey=-1), 3)"""
 
     # Compose an image
     log = spritesheet.compose_horiz([24, 25, 26], colorkey=-1)
     log = pygame.transform.scale(log, (log.get_width() * 4, log.get_height() * 4))
 
     # Variables for animation
-    allig_index = 0
+    """allig_index = 0"""
     frames_per_image = 5
  
     
     log_position_x = 50
     log_position_y = 300
 
-    alligator_position_x = 25
-    alligator_position_y = 300
+    """alligator_position_x = 25
+    alligator_position_y = 300"""
 
     line_length = 75
     
@@ -96,16 +149,18 @@ def main():
     log_sprite_rect[0] = log_position_x
     log_sprite_rect[1] = log_position_y
 
-    alligator_sprite_rect = allig_sprites[0].get_rect()
+    """alligator_sprite_rect = allig_sprites[0].get_rect()
     alligator_sprite_rect[0] = alligator_position_x
-    alligator_sprite_rect[1] = alligator_position_y
+    alligator_sprite_rect[1] = alligator_position_y"""
     
 
     
     
     pygame.math.Vector2(1, 0)
+
+    """
     def draw_alligator(alligator, index):
-        """Creates a composed image of the alligator sprites.
+        #Creates a composed image of the alligator sprites.
 
         Args:
             alligator (list): List of alligator sprites.
@@ -113,7 +168,7 @@ def main():
 
         Returns:
             pygame.Surface: Composed image of the alligator.
-        """
+        
         
         index = index % (len(alligator)-2)
         
@@ -126,6 +181,7 @@ def main():
         composed_image.blit(alligator[(index + 2) % len(alligator)], (width * 2, 0))
 
         return composed_image
+    """
     
     line_start_pos = pygame.Vector2(frog.frog_position_x+15, frog.frog_position_y)
     line_end_pos = pygame.Vector2(frog.frog_position_x+15, frog.frog_position_y - line_length)
@@ -135,45 +191,35 @@ def main():
     n2 = 20
     n3 = 611
     n4 = 376
-    n5 = 25
+    n5 = 25 
     
-    
-    while running:
-        screen.fill((0, 0, 139))  # Clear screen with deep blue
+      
+    while GameOver == False:
+        screen.fill(pygame.Color(0, 0, 139, 254))  # Clear screen with deep blue
 
         # Update animation every few frames
         frame_count += 1
         
-        if frame_count % frames_per_image == 0: 
-            """frog_index = (frog_index + 1) % len(frog.frog_sprites)"""
-            allig_index = (allig_index + 1) % len(allig_sprites)
-        
         # Get the current sprite and display it in the middle of the screen
 
         lilly_pad2 = pygame.draw.circle(screen, lilly_color, (line_start_pos[0] + 0.8, line_start_pos[1] + 10), 15)
-        """screen.blit(frog.frog_sprites[frog_index], frog_sprite_rect)""" 
 
-        
-        
-        composed_alligator = draw_alligator(allig_sprites, allig_index)
-        screen.blit(composed_alligator,  alligator_sprite_rect.move(0, 100))
+        """composed_alligator = draw_alligator(allig_sprites, allig_index)
+        screen.blit(composed_alligator,  alligator_sprite_rect.move(0, 100))"""
 
         screen.blit(log,  log_sprite_rect.move(0, -100))
         screen.blit(log,  log_sprite_rect.move(210, -15))
         screen.blit(log,  log_sprite_rect.move(300, -250))
 
-        frog.update()
-        frog.draw(screen)
+        frog_group.update()
+        alligator_group.update()
+        frog_group.draw(screen)
+        alligator_group.draw(screen)
 
         keys = pygame.key.get_pressed()
 
-        
-        
         frog_jump_line = pygame.draw.line(screen, color, line_start_pos, line_end_pos, width=2)
 
-        
-
-        
         pygame.draw.circle(screen, lilly_color, (n1, 50), 15)
         pygame.draw.circle(screen, lilly_inside_color, (n1, 50), 5)
         pygame.draw.circle(screen, lilly_color, (n2, 100), 15)
@@ -228,7 +274,6 @@ def main():
             line_end_pos = line_start_pos + new_line
             print("Going right")
             
-
         if keys[pygame.K_LEFT]:
             print("Going left")
             new_line = (line_end_pos - line_start_pos).rotate(-4)
@@ -254,8 +299,8 @@ def main():
             line_lenth -= 25"""
         
            
-        text = font.render("phrogger game", True, (0, 0, 0))
-        screen.blit(text, (10, 25))  
+        text = font.render("Phrogger Game", True, (0, 0, 0))
+        screen.blit(text, (10, 10))  
 
          # Update the display
         pygame.display.flip()
