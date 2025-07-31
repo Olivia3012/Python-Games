@@ -21,7 +21,7 @@ def scale_sprites(sprites, scale):
     return [pygame.transform.scale(sprite, (sprite.get_width() * scale, sprite.get_height() * scale)) for sprite in sprites]
 
 class Frog(pygame.sprite.Sprite):
-    def __init__(self, x, y, left):
+    def __init__(self, x, y, up, down, left, right, jump):
         super().__init__()
         filename = images / 'spritesheet.png'  # Replace with your actual file path
         cellsize = (16, 16)  # Replace with the size of your sprites
@@ -40,7 +40,10 @@ class Frog(pygame.sprite.Sprite):
         self.line_end_pos = pygame.Vector2(self.frog_position_x+15, self.frog_position_y - self.line_length)
         self.new_line = pygame.Vector2(self.line_end_pos - self.line_start_pos)
         self.left = left
-        
+        self.up = up
+        self.right = right
+        self.down = down
+        self.jump = jump
     def update(self):
         print(frame_count + 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
         keys = pygame.key.get_pressed()
@@ -59,13 +62,13 @@ class Frog(pygame.sprite.Sprite):
         
         self.frog_end_pos = self.line_end_pos
         
-        if keys[pygame.K_UP]:
+        if keys[self.up]:
             self.line_length += 5
 
-        if keys[pygame.K_DOWN]:
+        if keys[self.down]:
             self.line_length -= 5
                 
-        if keys[pygame.K_RIGHT]:
+        if keys[self.right]:
             self.new_line = (self.line_end_pos - self.line_start_pos).rotate(4)
             self.line_end_pos = self.line_start_pos + self.new_line
             
@@ -73,7 +76,7 @@ class Frog(pygame.sprite.Sprite):
             self.new_line = (self.line_end_pos - self.line_start_pos).rotate(-4)
             self.line_end_pos = self.line_start_pos + self.new_line
 
-        if keys[pygame.K_SPACE]:
+        if keys[self.jump]:
             if self.jumping == False:
                 self.rect = self.frog_end_pos
                 self.line_start_pos = pygame.Vector2(self.rect[0], self.rect[1])
@@ -154,8 +157,8 @@ def main():
     cellsize = (16, 16)  # Replace with the size of your sprites
     spritesheet = SpriteSheet(filename, cellsize)
 
-    frog = Frog(random.randint(10, 520), random.randint(10, 520), pygame.K_LEFT)
-    grog = Frog(random.randint(10, 520), random.randint(10, 520), pygame.K_a)
+    frog = Frog(random.randint(10, 520), random.randint(10, 520), pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_SPACE)
+    grog = Frog(random.randint(10, 520), random.randint(10, 520), pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_f)
 
     frog_group = pygame.sprite.Group()
     frog_group.add(frog)
