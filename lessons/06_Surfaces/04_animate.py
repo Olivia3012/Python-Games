@@ -54,7 +54,7 @@ class Frog(pygame.sprite.Sprite):
             self.rect[0] = 10
             print("Jump line is off the map!")
         if self.rect[1] > 600:
-            self.rect[1] = 470
+            self.rect[1] = 570
             print("Jump line is off the map!")
         if self.rect[1] < 0:
             self.rect[1] = 10
