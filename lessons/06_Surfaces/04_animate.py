@@ -14,8 +14,8 @@ frames_per_image = 5
 pygame.font.init()
 font = pygame.font.SysFont("nototraditionalnushu", 30)
 font2 = pygame.font.SysFont("nototraditionalnushu", 15)
-print(pygame.font.get_fonts())
-GameOver = False  
+
+
 
 
 def scale_sprites(sprites, scale):
@@ -188,7 +188,7 @@ def main():
     n3 = 611
     n4 = 376
     n5 = 25 
-    
+    GameOver = True
       
     while GameOver == False:
         screen.fill(pygame.Color(0, 0, 139, 254))  # Clear screen with deep blue
@@ -251,10 +251,11 @@ def main():
         grog_text = font2.render("player 1", True, (0, 0, 0))
         screen.blit(grog_text, (grog.rect[0]-4, grog.rect[1]+20))
 
-        vector = pygame.Vector2(alligator.rect[0], alligator.rect[1])
+        """vector = pygame.Vector2(alligator.rect[0], alligator.rect[1])
         move = vector.move_towards((frog.rect[0], frog.rect[1]), 1)
         alligator.rect[0] += move[0]
-        alligator.rect[1] += move[1] 
+        alligator.rect[1] += move[1] """
+        #commented out but will need later
         
 
         collider = pygame.sprite.groupcollide(alligator_group, frog_group, False, True)
@@ -269,7 +270,7 @@ def main():
                 """frog.image = frog.frog_sprites[4]"""
             print()
 
-        collider1 = pygame.sprite.groupcollide(frog_group, frog_group, True, False)
+        #collider1 = pygame.sprite.groupcollide(frog_group, frog_group, True, False)
             
 
          # Update the display
@@ -282,6 +283,15 @@ def main():
 
         # Cap the frame rate
         pygame.time.Clock().tick(60)
+
+    else:
+        screen.fill(pygame.Color(0, 0, 139, 254))
+        intro_text = font.render("Press space to begin!", True, (254, 254, 254))
+        keys = pygame.key.get_pressed()
+        screen.blit(intro_text, (300, 300))
+        if keys[pygame.K_SPACE]:
+            GameOver = False
+            print("working")
         
     # Quit Pygame
     pygame.quit()
