@@ -44,7 +44,7 @@ class Game_Settings():
     Player_y_velocity = 2
     Player_gravity = 0.75
     is_jumping = False
-    JAYDEN_COLOR = (175, 243, 100)
+    JAYDEN_COLOR = (1, 243, 100)
     LINE_COLOR = (56, 250, 150)
 
 

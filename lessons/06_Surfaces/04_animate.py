@@ -14,6 +14,8 @@ frames_per_image = 5
 pygame.font.init()
 font = pygame.font.SysFont("nototraditionalnushu", 30)
 font2 = pygame.font.SysFont("nototraditionalnushu", 15)
+font3 = pygame.font.SysFont("Times New Roman", 35)
+
 
 
 
@@ -43,6 +45,7 @@ class Frog(pygame.sprite.Sprite):
         self.left = left
         self.right = right
         self.jump = jump
+        self.dead = False
     def update(self):
         #print(frame_count + 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000)
         keys = pygame.key.get_pressed()
@@ -64,6 +67,7 @@ class Frog(pygame.sprite.Sprite):
         if keys[self.right]:
             self.new_line = (self.line_end_pos - self.line_start_pos).rotate(4)
             self.line_end_pos = self.line_start_pos + self.new_line
+
             
         if keys[self.left]:
             self.new_line = (self.line_end_pos - self.line_start_pos).rotate(-4)
@@ -140,7 +144,7 @@ def main():
     
     # Initialize Pygame
     pygame.init()
-
+    
     # Set up the display
     screen = pygame.display.set_mode((640, 600))
     pygame.display.set_caption("Frog jump game")
@@ -188,112 +192,154 @@ def main():
     n3 = 611
     n4 = 376
     n5 = 25 
-    GameOver = True
+    GameOver = False
+
+    while True:
       
-    while GameOver == False:
-        screen.fill(pygame.Color(0, 0, 139, 254))  # Clear screen with deep blue
+        while GameOver == False:
+            screen.fill(pygame.Color(0, 0, 139, 254))  # Clear screen with deep blue
 
-        # Update animation every few frames
-        frame_count += 1
-        
-        # Get the current sprite and display it in the middle of the screen
-        lilly_pad1 = pygame.draw.circle(screen, lilly_color, (grog.line_start_pos[0] + 0.8, grog.line_start_pos[1] + 10), 15)
-        lilly_pad2 = pygame.draw.circle(screen, lilly_color2, (frog.line_start_pos[0] + 0.8, frog.line_start_pos[1] + 10), 15)
-
-        screen.blit(log,  log_sprite_rect.move(0, -100))
-        screen.blit(log,  log_sprite_rect.move(210, -15))
-        screen.blit(log,  log_sprite_rect.move(300, -250))
-
-        frog_group.update()
-        alligator_group.update()
-        frog_group.draw(screen)
-        alligator_group.draw(screen)
-
-        keys = pygame.key.get_pressed()
-
-        frog_jump_line = pygame.draw.line(screen, color, frog.line_start_pos, frog.line_end_pos, width=2)
-        grog_jump_line = pygame.draw.line(screen, color2, grog.line_start_pos, grog.line_end_pos, width=2)
-        pygame.draw.circle(screen, lilly_color, (n1, 50), 15)
-        pygame.draw.circle(screen, lilly_inside_color, (n1, 50), 5)
-        pygame.draw.circle(screen, lilly_color, (n2, 100), 15)
-        pygame.draw.circle(screen, lilly_color, (n3, 176), 15)
-        pygame.draw.circle(screen, lilly_color, (n4, 294), 15)
-        pygame.draw.circle(screen, lilly_color, (n4, 278), 10)
-        pygame.draw.circle(screen, lilly_color, (n5, 401), 15)
-        n1 += random.randint(-1, 2)
-        n2 += random.randint(1, 6)
-        n3 += random.randint(-1, 2)
-        n4 += random.randint(1, 5)
-        n5 += random.randint(1, 3)
-
-        if n1 > 640:
-            n1 = 0
-
-        if n2 > 640:
-            n2 = 0
-
-        if n3 > 640:
-            n3 = 0
-
-        if n4 > 640:
-            n4 = 0
-
-        if n5 > 640:
-            n5 = 0
-        
-           
-        text = font.render("Phrogger Game", True, (0, 0, 0))
-        screen.blit(text, (10, 10))
-
-        frog_text = font2.render("player 0", True, (0, 0, 0))
-        screen.blit(frog_text, (frog.rect[0]-4, frog.rect[1]+20))
-
-        grog_text = font2.render("player 1", True, (0, 0, 0))
-        screen.blit(grog_text, (grog.rect[0]-4, grog.rect[1]+20))
-
-        """vector = pygame.Vector2(alligator.rect[0], alligator.rect[1])
-        move = vector.move_towards((frog.rect[0], frog.rect[1]), 1)
-        alligator.rect[0] += move[0]
-        alligator.rect[1] += move[1] """
-        #commented out but will need later
-        
-
-        collider = pygame.sprite.groupcollide(alligator_group, frog_group, False, True)
+            # Update animation every few frames
+            frame_count += 1
             
-        for i, key in enumerate(collider):
-            print(key, end="")
-            #print(f" number {i} hit ", end="")
-            for j, val in enumerate(collider[key]):
-                print(val, end="")
-                print(f" number {j}, ", )
-                print("You win!!!!!!!!!", end="")
-                """frog.image = frog.frog_sprites[4]"""
-            print()
+            # Get the current sprite and display it in the middle of the screen
+            lilly_pad1 = pygame.draw.circle(screen, lilly_color, (grog.line_start_pos[0] + 0.8, grog.line_start_pos[1] + 10), 15)
+            lilly_pad2 = pygame.draw.circle(screen, lilly_color2, (frog.line_start_pos[0] + 0.8, frog.line_start_pos[1] + 10), 15)
 
-        #collider1 = pygame.sprite.groupcollide(frog_group, frog_group, True, False)
+            screen.blit(log,  log_sprite_rect.move(0, -100))
+            screen.blit(log,  log_sprite_rect.move(210, -15))
+            screen.blit(log,  log_sprite_rect.move(300, -250))
+
+            frog_group.update()
+            alligator_group.update()
+            frog_group.draw(screen)
+            alligator_group.draw(screen)
+
+            keys = pygame.key.get_pressed()
+
+            frog_jump_line = pygame.draw.line(screen, color, frog.line_start_pos, frog.line_end_pos, width=2)
+            grog_jump_line = pygame.draw.line(screen, color2, grog.line_start_pos, grog.line_end_pos, width=2)
+            pygame.draw.circle(screen, lilly_color, (n1, 50), 15)
+            pygame.draw.circle(screen, lilly_inside_color, (n1, 50), 5)
+            pygame.draw.circle(screen, lilly_color, (n2, 100), 15)
+            pygame.draw.circle(screen, lilly_color, (n3, 176), 15)
+            pygame.draw.circle(screen, lilly_color, (n4, 294), 15)
+            pygame.draw.circle(screen, lilly_color, (n4, 278), 10)
+            pygame.draw.circle(screen, lilly_color, (n5, 401), 15)
+            n1 += random.randint(-1, 2)
+            n2 += random.randint(1, 6)
+            n3 += random.randint(-1, 2)
+            n4 += random.randint(1, 5)
+            n5 += random.randint(1, 3)
+
+            if n1 > 640:
+                n1 = 0
+
+            if n2 > 640:
+                n2 = 0
+
+            if n3 > 640:
+                n3 = 0
+
+            if n4 > 640:
+                n4 = 0
+
+            if n5 > 640:
+                n5 = 0
+            
+                
+            text = font.render("Phrogger Game", True, (0, 0, 0))
+            screen.blit(text, (10, 10))
+
+            frog_text = font2.render("player 0", True, (0, 0, 0))
+            screen.blit(frog_text, (frog.rect[0]-4, frog.rect[1]+20))
+
+            grog_text = font2.render("player 1", True, (0, 0, 0))
+            screen.blit(grog_text, (grog.rect[0]-4, grog.rect[1]+20))
+
+            """vector = pygame.Vector2(alligator.rect[0], alligator.rect[1])
+            move = vector.move_towards((frog.rect[0], frog.rect[1]), 1)
+            alligator.rect[0] += move[0]
+            alligator.rect[1] += move[1] """
+            #commented out but will need later
             
 
-         # Update the display
-        pygame.display.flip()
+            collider = pygame.sprite.groupcollide(alligator_group, frog_group, False, True)
+                
+            for i, key in enumerate(collider):
+                print(key, end="")
+                #print(f" number {i} hit ", end="")
+                for j, val in enumerate(collider[key]):
+                    val.dead = True
+                    print(val, end="")
+                    print(f" number {j}, ", )
+                    print("You win!!!!!!!!!", end="")
+                    
+                print()
 
-        # Handle events
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+            message = font2.render("Press r to Restart", True, (0, 0, 0))
+            screen.blit(message, (10, 50))
 
-        # Cap the frame rate
-        pygame.time.Clock().tick(60)
+            if keys[pygame.K_r]:
+                GameOver = True
+                print("working")
 
-    else:
-        screen.fill(pygame.Color(0, 0, 139, 254))
-        intro_text = font.render("Press space to begin!", True, (254, 254, 254))
-        keys = pygame.key.get_pressed()
-        screen.blit(intro_text, (300, 300))
-        if keys[pygame.K_SPACE]:
-            GameOver = False
-            print("working")
+
+            
+
+            #collider1 = pygame.sprite.groupcollide(frog_group, frog_group, True, False)
+                
+            
+                # Update the display
+            pygame.display.flip()
+
+            # Handle events
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+
+            # Cap the frame rate
+            pygame.time.Clock().tick(60)
+            keys = pygame.key.get_pressed()
+
+            if keys[pygame.K_q]:
+                GameOver = True
+        myVar = 0
+        while GameOver == True:
+            screen.fill(pygame.Color(0, 0, myVar%255, 255))
+            myVar += 1
+            intro_text = font.render("Press space to begin", True, (myVar%255, 0, myVar%255))
+            screen.blit(intro_text, (150, 225))
+            intro_text2 = font3.render("Welcome to the Phrogger game", True, (myVar%255, 0, myVar%255))
+            screen.blit(intro_text2, (25, 150))
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_SPACE]:
+                if frog.dead == True:
+                    frog.dead = False
+                    frog.rect[0] = frog.line_start_pos[0]
+                    frog.rect[1] = frog.line_start_pos[1]
+                    frog_group.add(frog)
+                if grog.dead == True:
+                    grog.dead = False
+                    grog.rect[0] = grog.line_start_pos[0]
+                    grog.rect[1] = grog.line_start_pos[1]
+                    frog_group.add(grog)
+
+                
+                GameOver = False
+                print("working")
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+
+            pygame.display.flip()
+            pygame.time.Clock().tick(60)
+            
+        # Quit Pygame
+       
         
-    # Quit Pygame
     pygame.quit()
 
 if __name__ == "__main__":
