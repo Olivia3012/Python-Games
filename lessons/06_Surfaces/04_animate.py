@@ -70,6 +70,20 @@ class Frog(pygame.sprite.Sprite):
             screen = pygame.display.set_mode((640, 600))
             screen.blit(message, (10, 300))
 
+        if self.rect[1] < 100:
+            filename = images / 'spritesheet.png'  # Replace with your actual file path
+            cellsize = (16, 16)
+            spritesheet = SpriteSheet(filename, cellsize)
+            self.frog_sprites = scale_sprites(spritesheet.load_strip(0, 5, colorkey=-1) , 2)
+            self.frog_index = 4                                     
+            self.image = self.frog_sprites[self.frog_index]
+        else:
+            filename = images / 'spritesheet.png'  # Replace with your actual file path
+            cellsize = (16, 16)
+            spritesheet = SpriteSheet(filename, cellsize)
+            self.frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 2)
+            
+
         
         self.frog_end_pos = self.line_end_pos
                 
@@ -93,10 +107,12 @@ class Frog(pygame.sprite.Sprite):
                 if self.frog_index == 2:
                     print("jumping")
         else:
-            self.jumping = False
-            if frame_count % frames_per_image == 0: 
-                self.frog_index = (self.frog_index + 1) % len(self.frog_sprites)                                      
-                self.image = self.frog_sprites[self.frog_index]
+                self.jumping = False
+                if frame_count % frames_per_image == 0: 
+                    self.frog_index = (self.frog_index + 1) % len(self.frog_sprites)                                      
+                    self.image = self.frog_sprites[self.frog_index]
+
+        
         
     
 
@@ -146,8 +162,12 @@ class Alligator(pygame.sprite.Sprite):
 
         
         if self.rect[0] > 600:  
-            self.rect[0] = 0
-            
+            self.rect[0] = 5
+
+        if self.rect[0] < 0:
+            self.rect[0] = 595
+
+
 
 def main():
     global frame_count
@@ -216,6 +236,13 @@ def main():
     n5 = 25 
     GameOver = False
 
+    rect_pos = 0
+    rect_pos2 = 15
+
+    rect_pos3 = 15
+    rect_pos4 = 0
+    GameOver = True
+
     while True:
       
         while GameOver == False:
@@ -233,19 +260,78 @@ def main():
                 frog_group.add(grog)
                 GameOver = True
                 frog.frog_life = True
-                pygame.time.wait(1000)
+                pygame.time.wait(1050)
                 GameOver = True
 
-            alligator.rect[0] += 3
-            alligator2.rect[0] += 5
-            alligator3.rect[0] += 7
-            alligator4.rect[0] += 9
-            alligator5.rect[0] += 11
-
             
-            # Get the current sprite and display it in the middle of the screen
+
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_1]:
+                alligator.rect[0] += 1
+                alligator2.rect[0] += 1
+                alligator3.rect[0] -= 2
+                alligator4.rect[0] -= 2
+                alligator5.rect[0] += 1
+            if keys[pygame.K_2]:
+                alligator.rect[0] += 2
+                alligator2.rect[0] += 3
+                alligator3.rect[0] -= 3
+                alligator4.rect[0] -= 2
+                alligator5.rect[0] += 2
+            if keys[pygame.K_3]:
+                alligator.rect[0] += 3
+                alligator2.rect[0] += 4
+                alligator3.rect[0] -= 3
+                alligator4.rect[0] -= 3
+                alligator5.rect[0] += 4
+            if keys[pygame.K_4]:
+                alligator.rect[0] += 4
+                alligator2.rect[0] += 5
+                alligator3.rect[0] -= 5
+                alligator4.rect[0] -= 5
+                alligator5.rect[0] += 4
+            if keys[pygame.K_5]:
+                alligator.rect[0] += 6
+                alligator2.rect[0] += 7
+                alligator3.rect[0] -= 7
+                alligator4.rect[0] -= 6
+                alligator5.rect[0] += 8
+            if keys[pygame.K_6]:
+                alligator.rect[0] += 10
+                alligator2.rect[0] += 15
+                alligator3.rect[0] -= 11
+                alligator4.rect[0] -= 9
+                alligator5.rect[0] += 8
+            if keys[pygame.K_7]:
+                alligator.rect[0] += 8
+                alligator2.rect[0] += 15
+                alligator3.rect[0] -= 11
+                alligator4.rect[0] -= 9
+                alligator5.rect[0] += 14
+            if keys[pygame.K_8]:
+                alligator.rect[0] += 17
+                alligator2.rect[0] += 15
+                alligator3.rect[0] -= 11
+                alligator4.rect[0] -= 18
+                alligator5.rect[0] += 20
+            if keys[pygame.K_9]:
+                alligator.rect[0] += 20
+                alligator2.rect[0] += 24
+                alligator3.rect[0] -= 21
+                alligator4.rect[0] -= 24
+                alligator5.rect[0] += 24
+
             lilly_pad1 = pygame.draw.circle(screen, lilly_color, (grog.line_start_pos[0] + 0.8, grog.line_start_pos[1] + 10), 15)
             lilly_pad2 = pygame.draw.circle(screen, lilly_color2, (frog.line_start_pos[0] + 0.8, frog.line_start_pos[1] + 10), 15)
+
+            for i in range(20):
+                pygame.draw.rect(screen, (0, 0, 0), (rect_pos + (i*30), 100, 15, 15))
+                pygame.draw.rect(screen, (255, 255, 255), (rect_pos2 + (i*30), 100, 15, 15))
+
+            for i in range(20):
+                pygame.draw.rect(screen, (0, 0, 0), (rect_pos3 + (i*30), 85, 15, 15))
+                pygame.draw.rect(screen, (255, 255, 255), (rect_pos4 + (i*30), 85, 15, 15))
+            
 
             screen.blit(log,  log_sprite_rect.move(0, -100))
             screen.blit(log,  log_sprite_rect.move(210, -15))
@@ -328,6 +414,10 @@ def main():
                 GameOver = True
                 print("Try to survive...")
 
+            
+            if keys[pygame.K_l]:
+                frog.line_length += 50
+
 
             
 
@@ -359,7 +449,20 @@ def main():
             screen.blit(intro_text3, (25, 300))
             intro_text4 = font4.render("Player 1 uses the a and d keys to rotate the line and the s key to jump", True, (200, 0, 200))
             screen.blit(intro_text4, (25, 325))
+
+            intro_text3 = font4.render("Press 1 for level 1, 2 for level 2, and so on.", True, (200, 0, 200))
+            screen.blit(intro_text3, (25, 350))
+
             keys = pygame.key.get_pressed()
+
+            frog.kill()
+            grog.kill()
+            frog = Frog(200, 550, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_DOWN)
+            grog = Frog(400, 550, pygame.K_a, pygame.K_d, pygame.K_s)
+            frog_group.add(frog)
+            frog_group.add(grog)
+            GameOver = True
+            frog.frog_life = True
 
                 
             if keys[pygame.K_SPACE]:
@@ -375,7 +478,7 @@ def main():
             pygame.display.flip()
             pygame.time.Clock().tick(60)
             
-        # Quit Pygame
+        
        
         
     pygame.quit()
