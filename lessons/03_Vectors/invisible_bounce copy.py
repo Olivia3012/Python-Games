@@ -28,14 +28,14 @@ class GameSettings:
     """Settings for the game"""
     width: int = 500
     height: int = 500
-    gravity: float = 0.3
+    gravity: float = 0.5
     player_start_x: int = 100
     player_start_y: int = None
     player_v_y: float = 0  # Initial y velocity
     player_v_x: float = 4  # Initial x velocity
     player_width: int = 30
     player_height: int = 30
-    player_jump_velocity: float = 1
+    player_jump_velocity: float = 0.5
     frame_rate: int = 100
     thrust = pygame.Vector2(2,1)
     
@@ -66,6 +66,7 @@ class Game:
         player = Player(self)
         player_group = pygame.sprite.Group()
         player_group.add(player)
+        
 
 
         while self.running:
@@ -75,8 +76,13 @@ class Game:
 
             player.update()
 
-            #self.screen.fill(Colors.BACKGROUND_COLOR)
+            self.screen.fill(Colors.BACKGROUND_COLOR)
             player.draw(self.screen)
+            pygame.draw.rect(self.screen, Colors.LINE_COLOR, (200, 400, 100, 10)) 
+            pygame.draw.rect(self.screen, Colors.LINE_COLOR, (100, 300, 100, 10)) 
+            pygame.draw.rect(self.screen, Colors.LINE_COLOR, (100, 210, 100, 10)) 
+            pygame.draw.rect(self.screen, Colors.LINE_COLOR, (350, 350, 100, 10)) 
+            pygame.draw.rect(self.screen, Colors.LINE_COLOR, (200, 100, 100, 10)) 
             pygame.display.flip()
             self.clock.tick(self.settings.frame_rate)
 
@@ -262,7 +268,7 @@ class Player(pygame.sprite.Sprite):
             self.LENGTH+=0.05
             
 
-        if keys[pygame.K_DOWN]: 
+        if keys[pygame.K_DOWN]:
             self.LENGTH-=0.03
 
         if keys[pygame.K_RIGHT]:
@@ -274,11 +280,6 @@ class Player(pygame.sprite.Sprite):
         initial_position = self.pos
         end_position = self.pos + self.v_jump * self.LENGTH * 100
         pygame.draw.line(screen, (self.myVar%255, self.myVar%100, 200), initial_position, end_position, 2)
-        #default sunset
-        #pygame.draw.line(screen, (self.myVar%155, 50, self.myVar%200), initial_position, end_position, 2)
-        #intresting color...matcha random
-        #pygame.draw.line(screen, (self.myVar%255, self.myVar%100, 100), initial_position, end_position, 2)
-        #summer and winter
         self.myVar += 1
         
 
