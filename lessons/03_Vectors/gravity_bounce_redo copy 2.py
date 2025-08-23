@@ -180,7 +180,7 @@ class Player:
         # stop the jump
         
         if self.at_bottom():
-            self.pos.y = self.game.settings.height - self.height
+            self.pos.y = self.game.settings.height - self.height 
 
         if self.at_top():
             self.pos.y = 0
@@ -214,20 +214,22 @@ class Player:
     def update_input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
-            self.vel += self.v_jump * self.LENGTH
+            self.vel += self.v_jump * self.LENGTH/2
  
     
     def draw(self, screen):
         pygame.draw.rect(screen, Colors.PLAYER_COLOR, (self.pos.x, self.pos.y, self.width, self.height))
 
         
+
+        
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
-            self.LENGTH+=0.05
+            self.LENGTH+=0.02
             
 
         if keys[pygame.K_DOWN]:
-            self.LENGTH-=0.03
+            self.LENGTH-=0.02
 
         if keys[pygame.K_RIGHT]:
             self.v_jump = self.v_jump.rotate(1)

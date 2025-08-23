@@ -405,7 +405,6 @@ def main():
                     
                 print()
                 frog.frog_life = False
-                
 
             message = font2.render("Press r to Restart", True, (0, 0, 0))
             screen.blit(message, (10, 50))
