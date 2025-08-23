@@ -274,6 +274,8 @@ class Player(pygame.sprite.Sprite):
         initial_position = self.pos
         end_position = self.pos + self.v_jump * self.LENGTH * 100
         pygame.draw.line(screen, (self.myVar%255, self.myVar%100, 200), initial_position, end_position, 2)
+        #pygame.draw.line(screen, (self.myVar%155, 50, self.myVar%200), initial_position, end_position, 2)
+        #intresting color...
         self.myVar += 1
         
 
