@@ -64,8 +64,12 @@ class Game:
     def run(self):
         """Main game loop"""
         player = Player(self)
+        Don = Player(self)
         player_group = pygame.sprite.Group()
         player_group.add(player)
+        player_group.add(Don)
+        self.myVar = 0
+        platform = Platform(game)
         
 
 
@@ -74,15 +78,14 @@ class Game:
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     self.running = False
 
-            player.update()
-
+            
             self.screen.fill(Colors.BACKGROUND_COLOR)
+            player_group.update()
+            player_group.draw(self.screen)
             player.draw(self.screen)
-            pygame.draw.rect(self.screen, Colors.LINE_COLOR, (200, 400, 100, 10)) 
-            pygame.draw.rect(self.screen, Colors.LINE_COLOR, (100, 300, 100, 10)) 
-            pygame.draw.rect(self.screen, Colors.LINE_COLOR, (100, 210, 100, 10)) 
-            pygame.draw.rect(self.screen, Colors.LINE_COLOR, (350, 350, 100, 10)) 
-            pygame.draw.rect(self.screen, Colors.LINE_COLOR, (200, 100, 100, 10)) 
+            self.myVar += 1
+            platform.update()
+            
             pygame.display.flip()
             self.clock.tick(self.settings.frame_rate)
 
@@ -119,8 +122,8 @@ class Player(pygame.sprite.Sprite):
         filename = images / 'spritesheet.png'  # Replace with your actual file path
         cellsize = (16, 16)  # Replace with the size of your sprites
         spritesheet = SpriteSheet(filename, cellsize)
-        self.frog_sprites = scale_sprites(spritesheet.load_strip(0, 2, colorkey=-1) , 2)
-        self.image = self.frog_sprites[0]
+        self.frog_sprites = scale_sprites(spritesheet.load_strip(0, 5, colorkey=-1) , 2)
+        self.image = self.frog_sprites[4]
         self.rect = self.image.get_rect()
         self.myVar = 0
 
@@ -151,20 +154,19 @@ class Player(pygame.sprite.Sprite):
     
     def at_top(self):
         """Check if the player is at the top of the screen"""
-        return self.pos.y <= 0
+        return self.rect.top <= 0
     
     def at_bottom(self):
         """Check if the player is at the bottom of the screen"""
-        return self.pos.y >= self.game.settings.height - self.height
+        return self.rect.bottom >= self.game.settings.height
 
     def at_left(self):
         """Check if the player is at the left of the screen"""
-        return self.pos.x <= 0
+        return self.rect.left <= 0
     
     def at_right(self):
         """Check if the player is at the right of the screen"""
-        return self.pos.x >= self.game.settings.width - self.width
-    
+        return self.rect.right >= self.game.settings.width    
     # Updates
     
     def update(self):
@@ -217,24 +219,25 @@ class Player(pygame.sprite.Sprite):
             
     def update_pos(self):
         """Update the player's position based on velocity"""
-        self.pos += self.vel  # Update the player's position based on the current velocity
+        self.rect[0] += self.vel[0]
+        self.rect[1] += self.vel[1]  # Update the player's position based on the current velocity
 
         # If the player is at the bottom, stop the player from falling and
         # stop the jump
         
         if self.at_bottom():
-            self.pos.y = self.game.settings.height - self.height
+            self.rect[1] = self.game.settings.height - self.height
 
         if self.at_top():
-            self.pos.y = 0
+            self.rect[1] = 0
 
         # Don't let the player go off the left side of the screen
         if self.at_left():
-            self.pos.x = 0
+            self.rect[0] = 0
   
         # Don't let the player go off the right side of the screen
         elif self.at_right():
-            self.pos.x = self.game.settings.width - self.width
+            self.rect[0] = self.game.settings.width - self.width
 
     def update_jump(self):
         """Handle the player's jumping logic"""
@@ -277,11 +280,22 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_LEFT]:
             self.v_jump = self.v_jump.rotate(-1)"""
         
-        initial_position = self.pos
-        end_position = self.pos + self.v_jump * self.LENGTH * 100
-        pygame.draw.line(screen, (self.myVar%255, self.myVar%100, 200), initial_position, end_position, 2)
-        self.myVar += 1
         
+        end_position = pygame.Vector2(self.rect[0],self.rect[1]) + self.v_jump * self.LENGTH * 100
+        pygame.draw.line(screen, (self.myVar%255, self.myVar%100, 200), pygame.Vector2(self.rect[0],self.rect[1]), end_position, 2)
+        self.myVar += 1
+
+class Platform(pygame.sprite.Sprite):
+    def __init__(self, game: Game):
+        Game.myVar = 0
+        self.game = game
+        game = Game(GameSettings)
+    def update(self):
+        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (200, 400, 100, 10)) 
+        
+    
+        
+
 
 
 settings = GameSettings()

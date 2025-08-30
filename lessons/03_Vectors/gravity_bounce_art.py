@@ -4,6 +4,7 @@ from jtlgames.vector20 import Vector20Factory
 import pygame
 from jtlgames.spritesheet import SpriteSheet
 from pathlib import Path
+import math
 import random
 images = Path(__file__).parent / 'images'
 
@@ -26,8 +27,8 @@ def scale_sprites(sprites, scale):
 @dataclass         
 class GameSettings:
     """Settings for the game"""
-    width: int = 500
-    height: int = 500
+    width: int = 600
+    height: int = 550
     gravity: float = 0.3
     player_start_x: int = 100
     player_start_y: int = None
@@ -273,12 +274,18 @@ class Player(pygame.sprite.Sprite):
         
         initial_position = self.pos
         end_position = self.pos + self.v_jump * self.LENGTH * 100
-        pygame.draw.line(screen, (self.myVar%255, self.myVar%100, 200), initial_position, end_position, 2)
+        #pygame.draw.line(screen, (self.myVar%255, self.myVar%100, 200), initial_position, end_position, 2)
         #default sunset
         #pygame.draw.line(screen, (self.myVar%155, 50, self.myVar%200), initial_position, end_position, 2)
         #intresting color...matcha random
         #pygame.draw.line(screen, (self.myVar%255, self.myVar%100, 100), initial_position, end_position, 2)
-        #summer and winter
+        #summer and winter-northern lights
+        #pygame.draw.line(screen, (254, self.myVar%134, self.myVar%243), initial_position, end_position, 2)
+        #summer fall vibes
+        pygame.draw.line(screen, (self.myVar%2 or 255, math.fabs(self.myVar%510 - 255), 100), initial_position, end_position, 2)
+        #Dragonfruit
+        #pygame.draw.line(screen, (self.myVar%random.randint(2, 25) or random.randint(1, 25), math.fabs(self.myVar%random.randint(1, 100) - 25), random.randint(1, 2)), initial_position, end_position, 2)
+        #rainforest
         self.myVar += 1
         
 
