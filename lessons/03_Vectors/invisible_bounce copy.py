@@ -63,8 +63,8 @@ class Game:
 
     def run(self):
         """Main game loop"""
-        player = Player(self)
-        Don = Player(self)
+        player = Player(self, 30, 10)
+        Don = Player(self, 100, 10)
         player_group = pygame.sprite.Group()
         player_group.add(player)
         player_group.add(Don)
@@ -91,6 +91,7 @@ class Game:
             platform.update(200, 200)
             platform.update(150, 400)
             platform.update(400, 401)
+            platform.update(12, 250)
 
             
             pygame.display.flip()
@@ -101,7 +102,7 @@ class Game:
 class Player(pygame.sprite.Sprite):
     """Player class, just a bouncing rectangle"""
 
-    def __init__(self, game: Game):
+    def __init__(self, game: Game, x, y):
         super().__init__()
         self.game = game
         settings = self.game.settings
@@ -114,9 +115,10 @@ class Player(pygame.sprite.Sprite):
         self.v_jump = pygame.Vector2(-settings.player_jump_velocity, -settings.player_jump_velocity)
 
         # Player position
-        self.pos = pygame.Vector2(settings.player_start_x, 
+        """self.pos = pygame.Vector2(settings.player_start_x, 
                                   settings.player_start_y if settings.player_start_y is not None else settings.height - self.height)
-        
+        """
+        self.pos = pygame.Vector2(x, y)
         # Player's velocity
         self.vel = pygame.Vector2(settings.player_v_x, settings.player_v_y)  # Velocity vector
         self.vel = settings.thrust
@@ -273,20 +275,6 @@ class Player(pygame.sprite.Sprite):
     
     def draw(self, screen):
         #pygame.draw.rect(screen, Colors.PLAYER_COLOR, (self.pos.x, self.pos.y, self.width, self.height))
-        
-        """keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.LENGTH+=0.05
-            
-
-        if keys[pygame.K_DOWN]:
-            self.LENGTH-=0.03
-
-        if keys[pygame.K_RIGHT]:
-            self.v_jump = self.v_jump.rotate(1)
-
-        if keys[pygame.K_LEFT]:
-            self.v_jump = self.v_jump.rotate(-1)"""
         
         
         end_position = pygame.Vector2(self.rect[0],self.rect[1]) + self.v_jump * self.LENGTH * 100
