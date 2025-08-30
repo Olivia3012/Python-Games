@@ -70,6 +70,9 @@ class Game:
         player_group.add(Don)
         self.myVar = 0
         platform = Platform(game)
+        platform_group = pygame.sprite.Group()
+        #platform2 = Platform(self)
+        #platform_group.add(platform2)
         
 
 
@@ -84,7 +87,11 @@ class Game:
             player_group.draw(self.screen)
             player.draw(self.screen)
             self.myVar += 1
-            platform.update()
+            platform.update(300, 300)
+            platform.update(200, 200)
+            platform.update(150, 400)
+            platform.update(400, 401)
+
             
             pygame.display.flip()
             self.clock.tick(self.settings.frame_rate)
@@ -227,9 +234,10 @@ class Player(pygame.sprite.Sprite):
         
         if self.at_bottom():
             self.rect[1] = self.game.settings.height - self.height
-
+            self.jumping = False
         if self.at_top():
             self.rect[1] = 0
+            
 
         # Don't let the player go off the left side of the screen
         if self.at_left():
@@ -249,7 +257,7 @@ class Player(pygame.sprite.Sprite):
                 self.vel += self.v_jump
                 """
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE] and self.jumping == False:
             self.vel += self.v_jump
 
         # Jumping means that the player is going up. The top of the  
@@ -259,7 +267,7 @@ class Player(pygame.sprite.Sprite):
          
     def update_input(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_SPACE] and self.jumping == False:
             self.vel += self.v_jump * self.LENGTH
  
     
@@ -290,8 +298,8 @@ class Platform(pygame.sprite.Sprite):
         Game.myVar = 0
         self.game = game
         game = Game(GameSettings)
-    def update(self):
-        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (200, 400, 100, 10)) 
+    def update(self, x, y):
+        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (x, y, 100, 10)) 
         
     
         
