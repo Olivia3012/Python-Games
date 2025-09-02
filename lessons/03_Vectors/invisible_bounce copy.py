@@ -92,7 +92,11 @@ class Game:
             platform.update(150, 400)
             platform.update(400, 401)
             platform.update(12, 250)
+            platform.update(300, 100)
+            collider = pygame.sprite.groupcollide(platform_group, player_group, False, False)
 
+            if collider:
+                print("collided")
             
             pygame.display.flip()
             self.clock.tick(self.settings.frame_rate)

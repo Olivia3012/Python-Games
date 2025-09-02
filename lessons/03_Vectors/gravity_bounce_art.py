@@ -282,13 +282,13 @@ class Player(pygame.sprite.Sprite):
         #summer and winter-northern lights
         #pygame.draw.line(screen, (254, self.myVar%134, self.myVar%243), initial_position, end_position, 2)
         #summer fall vibes
-        #pygame.draw.line(screen, (self.myVar%2 or 255, math.fabs(self.myVar%510 - 255), 100), initial_position, end_position, 2)
+        pygame.draw.line(screen, (self.myVar%2 or 255, math.fabs(self.myVar%510 - 255), 100), initial_position, end_position, 2)
         #Dragonfruit
         #pygame.draw.line(screen, (self.myVar%random.randint(2, 25) or random.randint(1, 25), math.fabs(self.myVar%random.randint(1, 100) - 25), random.randint(1, 2)), initial_position, end_position, 2)
         #rainforest
         #pygame.draw.line(screen, (self.myVar%random.randint(100, 250) or random.randint(10, 110), math.fabs(self.myVar%random.randint(1, 100) - 250), random.randint(1, 2)), initial_position, end_position, 2)
         #lime green
-        pygame.draw.line(screen, (self.myVar%50, math.fabs(self.myVar%random.randint(200, 255)), random.randint(250, 255)), initial_position, end_position, 2)
+        #pygame.draw.line(screen, (self.myVar%50, math.fabs(self.myVar%random.randint(200, 255)), random.randint(250, 255)), initial_position, end_position, 2)
         #Frozen blue
         #pygame.draw.line(screen, (self.myVar%150, self.myVar%255, random.randint(230, 255)), initial_position, end_position, 2)
         #winter ice arraura
