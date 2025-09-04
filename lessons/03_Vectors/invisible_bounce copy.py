@@ -6,6 +6,7 @@ from jtlgames.spritesheet import SpriteSheet
 from pathlib import Path
 import random
 images = Path(__file__).parent / 'images'
+images_dir = Path(__file__).parent / "images" if (Path(__file__).parent / "images").exists() else Path(__file__).parent / "assets"
 
 
 
@@ -102,11 +103,21 @@ class Game:
 
         pygame.quit() 
 
+class Platform(pygame.sprite.Sprite):
+    def __init__(self, game: Game):
+        Game.myVar = 0
+        self.game = game
+        game = Game(GameSettings)
+        pos_list = [(300, 300), (200, 200), (150, 400), (400, 400), (12, 250), (300, 100)]
+    def update(self, x, y):
+        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (x, y, 100, 10)) 
+
 class Player(pygame.sprite.Sprite):
     """Player class, just a bouncing rectangle"""
 
     def __init__(self, game: Game, x, y):
         super().__init__()
+        global pos_list
         self.game = game
         settings = self.game.settings
 
@@ -137,7 +148,12 @@ class Player(pygame.sprite.Sprite):
         spritesheet = SpriteSheet(filename, cellsize)
         self.frog_sprites = scale_sprites(spritesheet.load_strip(0, 5, colorkey=-1) , 2)
         self.image = self.frog_sprites[4]
+        self.frog = scale_sprites(spritesheet.load_strip(0, 5, colorkey=-1) , 2)
         self.rect = self.image.get_rect()
+        """self.image = pygame.image.load(images_dir / "fat_frog.png")
+        self.image = pygame.transform.scale(self.image, (60, 30))
+        self.rect = self.image.get_rect()"""
+        #fat frog sprite code
         self.myVar = 0
         self.rect[0], self.rect[1] = pygame.Vector2(x, y)
         self.on_platform = False
@@ -205,25 +221,24 @@ class Player(pygame.sprite.Sprite):
         initial_position = self.pos
         end_position = self.pos + self.v_jump * self.LENGTH * 100
 
-        """if self.going_down and 150 < self.rect[0] < 250 and 398 < self.rect[1] < 402:
+        if self.going_down and 150 < self.rect[0] < 250 and 398 < self.rect[1] < 402:
             self.rect[1] = 400 - self.rect.width
             self.vel = pygame.Vector2(0, 0)
              
             self.on_platform = True
             
         if self.rect[0] < 150 < 250 < self.rect[0]:
-            self.on_platform = False"""
+            self.on_platform = False
 
-        platform = Platform
-        if self.going_down and platform.pos_list[0][0] < self.rect[0] < platform.pos_list[0][0] + 100 and platform.pos_list[0][1]- 2 < self.rect[1] <  platform.pos_list[0][1] + 2:
+        """platform = Platform
+        if self.going_down and pos_list[0][0] < self.rect[0] < pos_list[0][0] + 100 and pos_list[0][1]- 2 < self.rect[1] <  pos_list[0][1] + 2:
             self.rect[1] = platform.pos_list[0][1] - self.rect.width
             self.vel = pygame.Vector2(0, 0)
              
             self.on_platform = True
             
-        if self.rect[0] < platform.pos_list[0][0] < platform.pos_list[0][0] + 100 < self.rect[0]:
-            self.on_platform = False
-
+        if self.rect[0] < pos_list[0][0] < pos_list[0][0] + 100 < self.rect[0]:
+            self.on_platform = False"""
         
         
     def update_v(self):
@@ -309,14 +324,7 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.line(screen, (self.myVar%255, self.myVar%100, color), pygame.Vector2(self.rect[0],self.rect[1]), end_position, 2)
         self.myVar += 1
 
-class Platform(pygame.sprite.Sprite):
-    def __init__(self, game: Game):
-        Game.myVar = 0
-        self.game = game
-        game = Game(GameSettings)
-        self.pos_list = [(300, 300), (200, 200), (150, 400), (400, 400), (12, 250), (300, 100)]
-    def update(self, x, y):
-        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (x, y, 100, 10)) 
+
         
     
         
