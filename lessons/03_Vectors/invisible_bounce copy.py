@@ -16,7 +16,7 @@ class Colors:
     BLACK = (0, 0, 0) 
     RED = (255, 0, 0)
     PLAYER_COLOR = (0, 0, 255)
-    BACKGROUND_COLOR = (255, 255, 255)
+    BACKGROUND_COLOR = (0, 0, 0)
     LINE_COLOR = (163, 212, 231)
 
 def scale_sprites(sprites, scale):
@@ -29,10 +29,10 @@ class GameSettings:
     width: int = 500
     height: int = 500
     gravity: float = 0.5
-    player_start_x: int = 100
-    player_start_y: int = None
+    player_start_x: int = 300
+    player_start_y: int = 0
     player_v_y: float = 0  # Initial y velocity
-    player_v_x: float = 4  # Initial x velocity
+    player_v_x: float = 0  # Initial x velocity
     player_width: int = 30
     player_height: int = 30
     player_jump_velocity: float = 0.5
@@ -63,8 +63,8 @@ class Game:
 
     def run(self):
         """Main game loop"""
-        player = Player(self, 30, 10)
-        Don = Player(self, 100, 10)
+        player = Player( self, 100, 500)
+        Don = Player(self, 300, 500)
         player_group = pygame.sprite.Group()
         player_group.add(player)
         player_group.add(Don)
@@ -83,20 +83,19 @@ class Game:
 
             
             self.screen.fill(Colors.BACKGROUND_COLOR)
-            player_group.update()
+            player.update( pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP)
+            Don.update( pygame.K_a, pygame.K_d, pygame.K_w)
             player_group.draw(self.screen)
-            player.draw(self.screen)
+            player.draw(self.screen, 200)
+            Don.draw(self.screen, 10)
             self.myVar += 1
             platform.update(300, 300)
             platform.update(200, 200)
             platform.update(150, 400)
-            platform.update(400, 401)
+            platform.update(400, 400)
             platform.update(12, 250)
             platform.update(300, 100)
-            collider = pygame.sprite.groupcollide(platform_group, player_group, False, False)
-
-            if collider:
-                print("collided")
+            
             
             pygame.display.flip()
             self.clock.tick(self.settings.frame_rate)
@@ -123,11 +122,12 @@ class Player(pygame.sprite.Sprite):
                                   settings.player_start_y if settings.player_start_y is not None else settings.height - self.height)
         """
         self.pos = pygame.Vector2(x, y)
+        
         # Player's velocity
         self.vel = pygame.Vector2(settings.player_v_x, settings.player_v_y)  # Velocity vector
         self.vel = settings.thrust
 
-        self.LENGTH = 0.1
+        self.LENGTH = 0.5
 
         gravity: float = 0.3
         self.gravity = pygame.Vector2(0, gravity)
@@ -139,6 +139,8 @@ class Player(pygame.sprite.Sprite):
         self.image = self.frog_sprites[4]
         self.rect = self.image.get_rect()
         self.myVar = 0
+        self.rect[0], self.rect[1] = pygame.Vector2(x, y)
+        self.on_platform = False
 
 
     # Direction functions. IMPORTANT! Using these functions isn't really
@@ -182,43 +184,54 @@ class Player(pygame.sprite.Sprite):
         return self.rect.right >= self.game.settings.width    
     # Updates
     
-    def update(self):
+    def update(self, left, right, up):
         """Update player position, continuously jumping"""
-        self.update_jump()
+        #print("update called")
+        print(self.on_platform)
+        self.update_jump(up)
         self.update_v()
         self.update_pos()
-        self.update_input()
+        self.update_input(up)
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.LENGTH+=0.05
+        """if keys[pygame.K_UP]:
+            self.LENGTH+=0.05"""
             
-
-        if keys[pygame.K_DOWN]:
-            self.LENGTH-=0.03
-
-        if keys[pygame.K_RIGHT]:
+        if keys[right]:
             self.v_jump = self.v_jump.rotate(1)
 
-        if keys[pygame.K_LEFT]:
+        if keys[left]:
             self.v_jump = self.v_jump.rotate(-1)
         
         initial_position = self.pos
         end_position = self.pos + self.v_jump * self.LENGTH * 100
+
+        if self.going_down and 150 < self.rect[0] < 250 and 398 < self.rect[1] < 402:
+            self.rect[1] = 400 - self.rect.width
+            self.vel = pygame.Vector2(0, 0)
+             
+            self.on_platform = True
+            
+        if self.rect[0] < 150 < 250 < self.rect[0]:
+            self.on_platform = False
+
         
+            
         
     def update_v(self):
         """Update the player's velocity based on gravity and bounce on edges"""
-         
-        self.vel += self.gravity  # Add gravity to the velocity
+        if self.on_platform == False:
+            self.vel += self.gravity  # Add gravity to the velocity
+
+            
+                
+            drag = -self.vel * 0.01
+            self.vel= self.vel + drag
 
         if self.at_bottom() and self.going_down():
             self.vel.y = 0
 
         if self.at_top() and self.going_up():
             self.vel.y = -self.vel.y
-            
-        drag = -self.vel * 0.01
-        self.vel= self.vel + drag
 
          # Bounce off the top. 
 
@@ -241,6 +254,7 @@ class Player(pygame.sprite.Sprite):
         if self.at_bottom():
             self.rect[1] = self.game.settings.height - self.height
             self.jumping = False
+            self.vel[0] = 0
         if self.at_top():
             self.rect[1] = 0
             
@@ -253,7 +267,7 @@ class Player(pygame.sprite.Sprite):
         elif self.at_right():
             self.rect[0] = self.game.settings.width - self.width
 
-    def update_jump(self):
+    def update_jump(self, up):
         """Handle the player's jumping logic"""
         
         # Notice that we've gotten rid of self.is_jumping, because we can just
@@ -263,26 +277,27 @@ class Player(pygame.sprite.Sprite):
                 self.vel += self.v_jump
                 """
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE] and self.jumping == False:
-            self.vel += self.v_jump
+        if keys[up]:
+            self.vel += self.v_jump 
+            
 
         # Jumping means that the player is going up. The top of the  
         # screen is y=0, and the bottom is y=SCREEN_HEIGHT. So, to go up,
         # we need to have a negative y velocity
         
          
-    def update_input(self):
+    def update_input(self, up):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE] and self.jumping == False:
+        if keys[up]:
             self.vel += self.v_jump * self.LENGTH
  
     
-    def draw(self, screen):
+    def draw(self, screen, color):
         #pygame.draw.rect(screen, Colors.PLAYER_COLOR, (self.pos.x, self.pos.y, self.width, self.height))
         
         
         end_position = pygame.Vector2(self.rect[0],self.rect[1]) + self.v_jump * self.LENGTH * 100
-        pygame.draw.line(screen, (self.myVar%255, self.myVar%100, 200), pygame.Vector2(self.rect[0],self.rect[1]), end_position, 2)
+        pygame.draw.line(screen, (self.myVar%255, self.myVar%100, color), pygame.Vector2(self.rect[0],self.rect[1]), end_position, 2)
         self.myVar += 1
 
 class Platform(pygame.sprite.Sprite):
