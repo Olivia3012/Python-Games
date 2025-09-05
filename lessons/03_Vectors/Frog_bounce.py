@@ -64,8 +64,8 @@ class Game:
 
     def run(self):
         """Main game loop"""
-        player = Player( self, 100, 500)
-        Don = Player(self, 300, 500)
+        player = Player( self, 100, 500, "fat_frog.png", 60, 30)
+        Don = Player(self, 300, 500, "Reg_kangaroo.png", 20, 30)
         player_group = pygame.sprite.Group()
         player_group.add(player)
         player_group.add(Don)
@@ -115,7 +115,7 @@ class Platform(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     """Player class, just a bouncing rectangle"""
 
-    def __init__(self, game: Game, x, y):
+    def __init__(self, game: Game, x, y, image, image_size_x, image_size_y):
         super().__init__()
         global pos_list
         self.game = game
@@ -143,16 +143,16 @@ class Player(pygame.sprite.Sprite):
         gravity: float = 0.3
         self.gravity = pygame.Vector2(0, gravity)
 
-        filename = images / 'spritesheet.png'  # Replace with your actual file path
+        """filename = images / 'spritesheet.png'  # Replace with your actual file path
         cellsize = (16, 16)  # Replace with the size of your sprites
         spritesheet = SpriteSheet(filename, cellsize)
         self.frog_sprites = scale_sprites(spritesheet.load_strip(0, 5, colorkey=-1) , 2)
         self.image = self.frog_sprites[4]
         self.frog = scale_sprites(spritesheet.load_strip(0, 5, colorkey=-1) , 2)
-        self.rect = self.image.get_rect()
-        """self.image = pygame.image.load(images_dir / "fat_frog.png")
-        self.image = pygame.transform.scale(self.image, (60, 30))
         self.rect = self.image.get_rect()"""
+        self.image = pygame.image.load(images_dir / image)
+        self.image = pygame.transform.scale(self.image, (image_size_x, image_size_y))
+        self.rect = self.image.get_rect()
         #fat frog sprite code
         self.myVar = 0
         self.rect[0], self.rect[1] = pygame.Vector2(x, y)
