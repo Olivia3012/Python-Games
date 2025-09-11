@@ -17,7 +17,7 @@ class Colors:
     BLACK = (0, 0, 0) 
     RED = (255, 0, 0)
     PLAYER_COLOR = (0, 0, 255)
-    BACKGROUND_COLOR = (0, 0, 0)
+    BACKGROUND_COLOR = (255, 255, 255)
     LINE_COLOR = (163, 212, 231)
 
 def scale_sprites(sprites, scale):
@@ -53,22 +53,30 @@ class Game:
         self.settings = settings
         self.running = True
 
-        self.screen = pygame.display.set_mode((self.settings.width, self.settings.height))
+        self.screen = pygame.display.set_mode((GameSettings.width, GameSettings.height))
         self.clock = pygame.time.Clock()
 
         # Turn Gravity into a vector
         self.gravity = pygame.Vector2(0, self.settings.gravity)
+        """self.flappy = ["flappybird.png", "flappydown.png"]
+        self.x = 0"""
 
     def vec_to_center(self, pos):
         print("I am at", Player.posx, Player)
 
     def run(self):
         """Main game loop"""
-        player = Player( self, 100, 500, "fat_frog.png", 60, 30)
-        Don = Player(self, 300, 500, "Reg_kangaroo.png", 20, 30)
+        player = Player( self, 300, 30, "fat_frog.png", 40, 20)
+        Don = Player(self, 40, 30, "Party_frog.png", 20, 50)
+        Ron = Player(self, 100, 30, "flappydown.png", 30, 25)
+        if GameSettings.frame_rate%100:
+            self.x += 1
+            if self.x > 1:
+                self.x = 0
         player_group = pygame.sprite.Group()
         player_group.add(player)
         player_group.add(Don)
+        player_group.add(Ron)
         self.myVar = 0
         platform = Platform(game)
         platform_group = pygame.sprite.Group()
@@ -84,11 +92,13 @@ class Game:
 
             
             self.screen.fill(Colors.BACKGROUND_COLOR)
-            player.update( pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP)
-            Don.update( pygame.K_a, pygame.K_d, pygame.K_w)
+            player.update(pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP)
+            Don.update(pygame.K_a, pygame.K_d, pygame.K_w)
+            Ron.update(pygame.K_v, pygame.K_n, pygame.K_SPACE)
             player_group.draw(self.screen)
             player.draw(self.screen, 200)
             Don.draw(self.screen, 10)
+            Ron.draw(self.screen, 100)
             self.myVar += 1
             platform.update(300, 300)
             platform.update(200, 200)
@@ -96,6 +106,7 @@ class Game:
             platform.update(400, 400)
             platform.update(12, 250)
             platform.update(300, 100)
+            
             
             
             pygame.display.flip()
@@ -140,7 +151,7 @@ class Player(pygame.sprite.Sprite):
 
         self.LENGTH = 0.5
 
-        gravity: float = 0.3
+        gravity: float = 0.4
         self.gravity = pygame.Vector2(0, gravity)
 
         """filename = images / 'spritesheet.png'  # Replace with your actual file path
@@ -156,6 +167,8 @@ class Player(pygame.sprite.Sprite):
         #fat frog sprite code
         self.myVar = 0
         self.rect[0], self.rect[1] = pygame.Vector2(x, y)
+        self.rect[2] = image_size_x
+        self.rect[3] = image_size_y
         self.on_platform = False
 
 
@@ -190,6 +203,8 @@ class Player(pygame.sprite.Sprite):
     def at_bottom(self):
         """Check if the player is at the bottom of the screen"""
         return self.rect.bottom >= self.game.settings.height
+        """return self.rect[1] == 600 - self.rect[3] or 599 - self.rect[3] """
+        
 
     def at_left(self):
         """Check if the player is at the left of the screen"""
@@ -203,7 +218,7 @@ class Player(pygame.sprite.Sprite):
     def update(self, left, right, up):
         """Update player position, continuously jumping"""
         #print("update called")
-        print(self.on_platform)
+        
         self.update_jump(up)
         self.update_v()
         self.update_pos()
@@ -221,9 +236,20 @@ class Player(pygame.sprite.Sprite):
         initial_position = self.pos
         end_position = self.pos + self.v_jump * self.LENGTH * 100
 
-        if self.going_down and 150 < self.rect[0] < 250 and 398 < self.rect[1] < 402:
-            self.rect[1] = 400 - self.rect.width
+
+        #   x                    x + width  y-3                 y + 3
+        if  150 < self.rect[0] < 250 and 397 < self.rect[1] < 403:
+            self.rect[1] = 400 - self.rect[3]
+            #              y
             self.vel = pygame.Vector2(0, 0)
+        #deleted going down "self.going_down and" 
+
+        # TODO: make each Platform object store its location and dimensions somehow. with a rect?
+        # for p in platforms:  # platforms is a list of the 6 Platform objects
+          #   if  p.x < self.rect[0] < p.x + p.w and p.y-3 < self.rect[1] < p.y + 3:
+          #  self.rect[1] = p.y - self.rect[3]
+          #  self.vel = pygame.Vector2(0, 0)
+
              
             self.on_platform = True
             
@@ -253,6 +279,7 @@ class Player(pygame.sprite.Sprite):
 
         if self.at_bottom() and self.going_down():
             self.vel.y = 0
+            print(self.rect[1])
 
         if self.at_top() and self.going_up():
             self.vel.y = -self.vel.y
@@ -276,7 +303,7 @@ class Player(pygame.sprite.Sprite):
         # stop the jump
         
         if self.at_bottom():
-            self.rect[1] = self.game.settings.height - self.height
+            self.rect[1] = self.game.settings.height - self.rect[3]
             self.jumping = False
             self.vel[0] = 0
         if self.at_top():
@@ -285,11 +312,11 @@ class Player(pygame.sprite.Sprite):
 
         # Don't let the player go off the left side of the screen
         if self.at_left():
-            self.rect[0] = 0
+            self.rect[0] = 0 + self.rect[2]
   
         # Don't let the player go off the right side of the screen
         elif self.at_right():
-            self.rect[0] = self.game.settings.width - self.width
+            self.rect[0] = self.game.settings.width - self.rect[2]
 
     def update_jump(self, up):
         """Handle the player's jumping logic"""
@@ -313,15 +340,15 @@ class Player(pygame.sprite.Sprite):
     def update_input(self, up):
         keys = pygame.key.get_pressed()
         if keys[up]:
-            self.vel += self.v_jump * self.LENGTH
+            self.vel += self.v_jump * self.LENGTH 
  
     
     def draw(self, screen, color):
         #pygame.draw.rect(screen, Colors.PLAYER_COLOR, (self.pos.x, self.pos.y, self.width, self.height))
         
         
-        end_position = pygame.Vector2(self.rect[0],self.rect[1]) + self.v_jump * self.LENGTH * 100
-        pygame.draw.line(screen, (self.myVar%255, self.myVar%100, color), pygame.Vector2(self.rect[0],self.rect[1]), end_position, 2)
+        end_position = pygame.Vector2(self.rect[0],self.rect[1]) + self.v_jump * self.LENGTH * 50
+        pygame.draw.line(screen, (self.myVar%255, self.myVar%100, color), pygame.Vector2(self.rect[0],self.rect[1]), end_position, 1)
         self.myVar += 1
 
 
