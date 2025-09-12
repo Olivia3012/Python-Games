@@ -7,7 +7,7 @@ from pathlib import Path
 import random
 images = Path(__file__).parent / 'images'
 images_dir = Path(__file__).parent / "images" if (Path(__file__).parent / "images").exists() else Path(__file__).parent / "assets"
-
+pos_list = [300, 300, 200, 200, 150, 400, 400, 400, 12, 250, 300, 100]
 
 
 
@@ -67,8 +67,8 @@ class Game:
     def run(self):
         """Main game loop"""
         player = Player( self, 300, 30, "fat_frog.png", 40, 20)
-        Don = Player(self, 40, 30, "Party_frog.png", 20, 50)
-        Ron = Player(self, 100, 30, "flappydown.png", 30, 25)
+        Don = Player(self, 40, 30, "Musibi_shiba.png", 75, 50)
+        Ron = Player(self, 100, 30, "Cute_frog.png", 50, 50)
         if GameSettings.frame_rate%100:
             self.x += 1
             if self.x > 1:
@@ -96,16 +96,16 @@ class Game:
             Don.update(pygame.K_a, pygame.K_d, pygame.K_w)
             Ron.update(pygame.K_v, pygame.K_n, pygame.K_SPACE)
             player_group.draw(self.screen)
-            player.draw(self.screen, 200)
+            player.draw(self.screen, 150)
             Don.draw(self.screen, 10)
-            Ron.draw(self.screen, 100)
+            Ron.draw(self.screen, 255)
             self.myVar += 1
-            platform.update(300, 300)
-            platform.update(200, 200)
+            platform.update()
+            """platform.update(200, 200)
             platform.update(150, 400)
             platform.update(400, 400)
             platform.update(12, 250)
-            platform.update(300, 100)
+            platform.update(300, 100)"""
             
             
             
@@ -119,12 +119,28 @@ class Platform(pygame.sprite.Sprite):
         Game.myVar = 0
         self.game = game
         game = Game(GameSettings)
-        pos_list = [(300, 300), (200, 200), (150, 400), (400, 400), (12, 250), (300, 100)]
-    def update(self, x, y):
-        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (x, y, 100, 10)) 
+        #self.pos_list = [(300, 300), (200, 200), (150, 400), (400, 400), (12, 250), (300, 100)]
+        #pos_list = [300, 300, 200, 200, 150, 400, 400, 400, 12, 250, 300, 100]
+        self.pos1 = pygame.Vector2(300, 300)
+        self.pos2 = pygame.Vector2(200, 200)
+        self.pos3 = pygame.Vector2(150, 400)
+        self.pos4 = pygame.Vector2(400, 400)
+
+        self.width = 100
+        self.height = 10
+        
+    def update(self):
+        #had x and y so can pass in
+        pos_list = [300, 300, 200, 200, 150, 400, 400, 400, 12, 250, 300, 100]
+        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (self.pos1[0], self.pos1[1], self.width, self.height))
+        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (self.pos2[0], self.pos2[1], self.width, self.height))
+        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (self.pos3[0], self.pos3[1], self.width, self.height))
+        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (self.pos4[0], self.pos4[1], self.width, self.height))
+        #pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (x, y, 100, 10)) 
 
 class Player(pygame.sprite.Sprite):
     """Player class, just a bouncing rectangle"""
+
 
     def __init__(self, game: Game, x, y, image, image_size_x, image_size_y):
         super().__init__()
@@ -237,11 +253,12 @@ class Player(pygame.sprite.Sprite):
         end_position = self.pos + self.v_jump * self.LENGTH * 100
 
 
-        #   x                    x + width  y-3                 y + 3
-        if  150 < self.rect[0] < 250 and 397 < self.rect[1] < 403:
+        #   x                    x + width  y-4                 y + 4
+        if  150 < self.rect[0] < 250 and 396 < self.rect[1] < 404:
             self.rect[1] = 400 - self.rect[3]
             #              y
             self.vel = pygame.Vector2(0, 0)
+            self.on_platform = True
         #deleted going down "self.going_down and" 
 
         # TODO: make each Platform object store its location and dimensions somehow. with a rect?
@@ -249,9 +266,23 @@ class Player(pygame.sprite.Sprite):
           #   if  p.x < self.rect[0] < p.x + p.w and p.y-3 < self.rect[1] < p.y + 3:
           #  self.rect[1] = p.y - self.rect[3]
           #  self.vel = pygame.Vector2(0, 0)
+        list_num = 0
+        print("Working???")
+        """while True:
+            if pos_list[list_num] < self.rect[0] < pos_list[list_num] + 100:
+                if pos_list[list_num + 1] - 4 < self.rect[1] < pos_list[list_num + 1] + 4:
+                    self.rect[1] = 400 - self.rect[3]
+                    self.vel = pygame.Vector2(0, 0)
+                    self.on_platform = True
+                    
+                    x += 1
+            if list_num > 7:
+                list_num = 0"""
+
+
 
              
-            self.on_platform = True
+            
             
         if self.rect[0] < 150 < 250 < self.rect[0]:
             self.on_platform = False
@@ -279,7 +310,7 @@ class Player(pygame.sprite.Sprite):
 
         if self.at_bottom() and self.going_down():
             self.vel.y = 0
-            print(self.rect[1])
+            #print(self.rect[1])
 
         if self.at_top() and self.going_up():
             self.vel.y = -self.vel.y
