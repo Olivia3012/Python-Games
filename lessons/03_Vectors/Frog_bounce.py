@@ -8,6 +8,10 @@ import random
 images = Path(__file__).parent / 'images'
 images_dir = Path(__file__).parent / "images" if (Path(__file__).parent / "images").exists() else Path(__file__).parent / "assets"
 pos_list = [300, 300, 200, 200, 150, 400, 400, 400, 12, 250, 300, 100]
+from pygame import mixer
+mixer.init()
+mixer.music.load("song.mp3")
+mixer.music.set_volume(0.7)
 
 
 
