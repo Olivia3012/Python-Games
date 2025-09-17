@@ -8,10 +8,10 @@ import random
 images = Path(__file__).parent / 'images'
 images_dir = Path(__file__).parent / "images" if (Path(__file__).parent / "images").exists() else Path(__file__).parent / "assets"
 pos_list = [300, 300, 200, 200, 150, 400, 400, 400, 12, 250, 300, 100]
-from pygame import mixer
+"""from pygame import mixer
 mixer.init()
-mixer.music.load("song.mp3")
-mixer.music.set_volume(0.7)
+mixer.music.load("Daisies.mp3")
+mixer.music.set_volume(0.7)"""
 
 
 
@@ -70,7 +70,7 @@ class Game:
 
     def run(self):
         """Main game loop"""
-        player = Player( self, 300, 30, "fat_frog.png", 40, 20)
+        player = Player( self, 300, 30, "panda.png", 100, 50)
         Don = Player(self, 40, 30, "Musibi_shiba.png", 75, 50)
         Ron = Player(self, 100, 30, "Cute_frog.png", 50, 50)
         if GameSettings.frame_rate%100:
@@ -271,7 +271,7 @@ class Player(pygame.sprite.Sprite):
           #  self.rect[1] = p.y - self.rect[3]
           #  self.vel = pygame.Vector2(0, 0)
         list_num = 0
-        print("Working???")
+        #print("Working???")
         """while True:
             if pos_list[list_num] < self.rect[0] < pos_list[list_num] + 100:
                 if pos_list[list_num + 1] - 4 < self.rect[1] < pos_list[list_num + 1] + 4:
