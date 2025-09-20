@@ -70,7 +70,7 @@ class Game:
 
     def run(self):
         """Main game loop"""
-        player = Player( self, 300, 30, "panda.png", 100, 50)
+        player = Player( self, 300, 30, "fat_frog.png", 100, 50)
         Don = Player(self, 40, 30, "Musibi_shiba.png", 75, 50)
         Ron = Player(self, 100, 30, "Cute_frog.png", 50, 50)
         if GameSettings.frame_rate%100:
@@ -81,11 +81,20 @@ class Game:
         player_group.add(player)
         player_group.add(Don)
         player_group.add(Ron)
+        
         self.myVar = 0
-        platform = Platform(game)
+        platform = Platform(game, 200, 200)
+        platform1 = Platform(game, 150, 400)
+        platform2 = Platform(game, 400, 400)
+        platform3 = Platform(game, 12, 255)
+        platform4 = Platform(game, 300, 100)
         platform_group = pygame.sprite.Group()
-        #platform2 = Platform(self)
-        #platform_group.add(platform2)
+        platform_group.add(platform)
+        platform_group.add(platform1)
+        platform_group.add(platform2)
+        platform_group.add(platform3)
+        platform_group.add(platform4)
+        
         
 
 
@@ -100,16 +109,16 @@ class Game:
             Don.update(pygame.K_a, pygame.K_d, pygame.K_w)
             Ron.update(pygame.K_v, pygame.K_n, pygame.K_SPACE)
             player_group.draw(self.screen)
+            platform_group.update()
+            platform_group.draw(self.screen)
             player.draw(self.screen, 150)
             Don.draw(self.screen, 10)
             Ron.draw(self.screen, 255)
             self.myVar += 1
-            platform.update()
-            """platform.update(200, 200)
-            platform.update(150, 400)
-            platform.update(400, 400)
-            platform.update(12, 250)
-            platform.update(300, 100)"""
+            collider = pygame.sprite.groupcollide(player_group, platform_group, False, False)
+            if collider:
+                #player.rect[0] = 
+                pass
             
             
             
@@ -119,28 +128,24 @@ class Game:
         pygame.quit() 
 
 class Platform(pygame.sprite.Sprite):
-    def __init__(self, game: Game):
-        Game.myVar = 0
+    def __init__(self, game: Game, x, y):
+        super().__init__()
         self.game = game
-        game = Game(GameSettings)
-        #self.pos_list = [(300, 300), (200, 200), (150, 400), (400, 400), (12, 250), (300, 100)]
-        #pos_list = [300, 300, 200, 200, 150, 400, 400, 400, 12, 250, 300, 100]
-        self.pos1 = pygame.Vector2(300, 300)
-        self.pos2 = pygame.Vector2(200, 200)
-        self.pos3 = pygame.Vector2(150, 400)
-        self.pos4 = pygame.Vector2(400, 400)
-
+        self.game.myVar = 0
         self.width = 100
         self.height = 10
+        self.color = (game.myVar%255, game.myVar%100, 200)
+        
+        self.image = pygame.Surface((self.width, self.height))
+        self.rect = self.image.get_rect()
+        self.rect[0] = x
+        self.rect[1] = y
+
         
     def update(self):
-        #had x and y so can pass in
-        pos_list = [300, 300, 200, 200, 150, 400, 400, 400, 12, 250, 300, 100]
-        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (self.pos1[0], self.pos1[1], self.width, self.height))
-        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (self.pos2[0], self.pos2[1], self.width, self.height))
-        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (self.pos3[0], self.pos3[1], self.width, self.height))
-        pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (self.pos4[0], self.pos4[1], self.width, self.height))
-        #pygame.draw.rect(game.screen, (game.myVar%255, game.myVar%100, 200), (x, y, 100, 10)) 
+        self.color = self.color = (game.myVar%255, game.myVar%100, 200)
+        self.image.fill(self.color)
+
 
 class Player(pygame.sprite.Sprite):
     """Player class, just a bouncing rectangle"""
@@ -174,13 +179,6 @@ class Player(pygame.sprite.Sprite):
         gravity: float = 0.4
         self.gravity = pygame.Vector2(0, gravity)
 
-        """filename = images / 'spritesheet.png'  # Replace with your actual file path
-        cellsize = (16, 16)  # Replace with the size of your sprites
-        spritesheet = SpriteSheet(filename, cellsize)
-        self.frog_sprites = scale_sprites(spritesheet.load_strip(0, 5, colorkey=-1) , 2)
-        self.image = self.frog_sprites[4]
-        self.frog = scale_sprites(spritesheet.load_strip(0, 5, colorkey=-1) , 2)
-        self.rect = self.image.get_rect()"""
         self.image = pygame.image.load(images_dir / image)
         self.image = pygame.transform.scale(self.image, (image_size_x, image_size_y))
         self.rect = self.image.get_rect()
@@ -263,6 +261,8 @@ class Player(pygame.sprite.Sprite):
             #              y
             self.vel = pygame.Vector2(0, 0)
             self.on_platform = True
+
+        
         #deleted going down "self.going_down and" 
 
         # TODO: make each Platform object store its location and dimensions somehow. with a rect?
@@ -347,7 +347,7 @@ class Player(pygame.sprite.Sprite):
 
         # Don't let the player go off the left side of the screen
         if self.at_left():
-            self.rect[0] = 0 + self.rect[2]
+            self.rect[0] = 0 
   
         # Don't let the player go off the right side of the screen
         elif self.at_right():
