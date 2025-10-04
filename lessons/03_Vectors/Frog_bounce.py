@@ -15,6 +15,7 @@ mixer.music.set_volume(0.7)"""
 
 
 
+
 class Colors:
     """Constants for Colors"""
     WHITE = (255, 255, 255)
@@ -23,7 +24,7 @@ class Colors:
     PLAYER_COLOR = (0, 0, 255)
     BACKGROUND_COLOR = (255, 255, 255)
     LINE_COLOR = (163, 212, 231)
-
+    
 def scale_sprites(sprites, scale):
     return [pygame.transform.scale(sprite, (sprite.get_width() * scale, sprite.get_height() * scale)) for sprite in sprites]
 
@@ -70,9 +71,9 @@ class Game:
 
     def run(self):
         """Main game loop"""
-        player = Player( self, 300, 30, "fat_frog.png", 100, 50)
-        Don = Player(self, 40, 30, "Musibi_shiba.png", 75, 50)
-        Ron = Player(self, 100, 30, "Cute_frog.png", 50, 50)
+        player = Player( self, 300, 500, "fat_frog.png", 60, 30)
+        Don = Player(self, 40, 500, "Musibi_shiba.png", 75, 50)
+        Ron = Player(self, 50, 500, "Cute_frog.png", 50, 50)
         if GameSettings.frame_rate%100:
             self.x += 1
             if self.x > 1:
@@ -104,7 +105,7 @@ class Game:
                     self.running = False
 
             
-            self.screen.fill(Colors.BACKGROUND_COLOR)
+            self.screen.fill(Colors.BLACK)
             player.update(pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP)
             Don.update(pygame.K_a, pygame.K_d, pygame.K_w)
             Ron.update(pygame.K_v, pygame.K_n, pygame.K_SPACE)
@@ -115,12 +116,50 @@ class Game:
             Don.draw(self.screen, 10)
             Ron.draw(self.screen, 255)
             self.myVar += 1
-            collider = pygame.sprite.groupcollide(player_group, platform_group, False, False)
+            collider = pygame.sprite.spritecollide(player, platform_group, False)
             if collider:
-                #player.rect[0] = 
-                pass
-            
-            
+                player.vel = pygame.Vector2(0, 0)
+                self.on_platform = True
+                
+
+            collider = pygame.sprite.spritecollide(Don, platform_group, False)
+            if collider:
+                Don.vel = pygame.Vector2(0, 0)
+                self.on_platform = True
+                
+
+            collider = pygame.sprite.spritecollide(Ron, platform_group, False)
+            if collider:
+                Ron.vel = pygame.Vector2(0, 0)
+                self.on_platform = True
+
+            font = pygame.font.SysFont("Georgia", 50)
+            font2 = pygame.font.SysFont("Georgia", 20)
+            if Ron.rect[1] < 100:
+                intro_text = font.render("Ron Wins :)", True, (self.myVar%255, 0, self.myVar%255))
+                self.screen.blit(intro_text, (50, 30))
+            if Don.rect[1] < 100:
+                intro_text = font.render("Don Wins :)", True, (self.myVar%255, 0, self.myVar%255))
+                self.screen.blit(intro_text, (50, 30))
+            if player.rect[1] < 100:
+                intro_text = font.render("Player Wins :)", True, (self.myVar%255, 100, self.myVar%255))
+                self.screen.blit(intro_text, (50,  30))
+            player_text = font2.render("Player", True, (self.myVar%255, 100, self.myVar%255))
+            self.screen.blit(player_text, (player.rect[0] - 10, player.rect[1] - 15))
+            player2_text = font2.render("Ron", True, (self.myVar%255, 100, self.myVar%255))
+            self.screen.blit(player2_text, (Ron.rect[0] - 10, Ron.rect[1] - 15))
+            player_text3 = font2.render("Don", True, (self.myVar%255, 100, self.myVar%255))
+            self.screen.blit(player_text3, (Don.rect[0] - 10, Don.rect[1] - 15))
+            x = 0
+            x+= 1
+            if x> 100:
+                x = 0
+
+            if x > 50:
+                platform.kill
+                platform = Platform(Game, random.randint(0, 500), random.randint(0, 500))
+                platform_group.add(platform)
+                
             
             pygame.display.flip()
             self.clock.tick(self.settings.frame_rate)
@@ -363,7 +402,7 @@ class Player(pygame.sprite.Sprite):
                 self.vel += self.v_jump
                 """
         keys = pygame.key.get_pressed()
-        if keys[up]:
+        if keys[up] and self.at_bottom or self.on_platform == True:
             self.vel += self.v_jump 
             
 
@@ -374,8 +413,8 @@ class Player(pygame.sprite.Sprite):
          
     def update_input(self, up):
         keys = pygame.key.get_pressed()
-        if keys[up]:
-            self.vel += self.v_jump * self.LENGTH 
+        if keys[up] and self.at_bottom or self.on_platform == True:
+            self.vel += self.v_jump/2 * self.LENGTH
  
     
     def draw(self, screen, color):

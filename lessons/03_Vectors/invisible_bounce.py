@@ -21,7 +21,7 @@ class Colors:
 
 def scale_sprites(sprites, scale):
     return [pygame.transform.scale(sprite, (sprite.get_width() * scale, sprite.get_height() * scale)) for sprite in sprites]
-
+ 
 
 @dataclass         
 class GameSettings:
